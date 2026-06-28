@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BIBNORM — Referencias bibliográficas</title>
+  <title>BIBNORM — Referencias bibliográficas APA 7</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -15,19 +15,40 @@
     .logo-sub{font-size:11px;color:#85B7EB;margin-top:2px}
     .btn-ham{background:none;border:none;cursor:pointer;color:#E6F1FB;font-size:24px;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .15s}
     .btn-ham:hover{background:rgba(255,255,255,.12)}
-    main{max-width:560px;margin:0 auto;padding:5rem 1.5rem;text-align:center}
-    .ic{width:100px;height:100px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.75rem;font-size:48px;background:rgba(99,102,241,.11)}
-    h1{font-size:24px;font-weight:700;color:#0C447C;margin-bottom:.75rem}
-    .tag{display:inline-block;font-size:12px;font-weight:600;background:rgba(24,95,165,.1);color:#185FA5;padding:4px 12px;border-radius:20px;margin-bottom:1.5rem}
-    p{font-size:14px;color:#5c5c59;line-height:1.6;margin-bottom:2rem}
-    .btn-back{display:inline-flex;align-items:center;gap:8px;background:#0C447C;color:#fff;text-decoration:none;padding:11px 22px;border-radius:9px;font-size:13px;font-weight:600;transition:background .15s}
-    .btn-back:hover{background:#185FA5}
+    main{max-width:760px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+    .card{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1.25rem;box-shadow:0 2px 14px rgba(12,68,124,.07);border:0.5px solid rgba(12,68,124,.06)}
+    .sec-hdr{font-size:15px;font-weight:600;color:#0C447C;margin-bottom:1.1rem;display:flex;align-items:center;gap:8px}
+    .fg{margin-bottom:1rem}
+    .fg label{display:block;font-size:11.5px;font-weight:600;color:#5c5c59;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+    .fg .hint{font-size:11px;color:#9b9b97;margin-top:3px}
+    .opt{font-size:10.5px;font-weight:400;color:#9b9b97;margin-left:4px;text-transform:none;letter-spacing:0}
+    input[type=text],input[type=number],select{width:100%;background:#f9f9f9;border:0.5px solid rgba(0,0,0,.15);border-radius:6px;color:#1a1a18;font-family:inherit;font-size:13px;padding:9px 11px;transition:border-color .15s,box-shadow .15s}
+    input[type=text]:focus,input[type=number]:focus,select:focus{outline:none;border-color:#185FA5;box-shadow:0 0 0 3px rgba(24,95,165,.12);background:#fff}
+    #tipo-sel{font-size:14px;padding:10px 12px;border-radius:8px;font-weight:500;background:#fff;border:1px solid rgba(12,68,124,.2);color:#0C447C;cursor:pointer}
+    .auth-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+    .auth-row input{flex:1;min-width:0}
+    .btn-rm-auth{background:none;border:0.5px solid rgba(155,28,28,.3);border-radius:5px;color:#9b1c1c;cursor:pointer;padding:0 8px;height:36px;font-size:16px;flex-shrink:0;transition:background .15s;line-height:1}
+    .btn-rm-auth:hover{background:#fee9e9}
+    .btn-add{background:none;border:0.5px dashed rgba(24,95,165,.4);border-radius:6px;color:#185FA5;cursor:pointer;font-size:12px;padding:6px 12px;margin-top:4px;display:inline-flex;align-items:center;gap:5px;transition:background .15s}
+    .btn-add:hover{background:#E6F1FB}
+    .date-row{display:flex;gap:8px}
+    .date-row>div{flex:1;min-width:0}
+    .btn-gen{background:#185FA5;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;padding:12px 24px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .15s;margin-top:.5rem}
+    .btn-gen:hover{background:#0C447C}
+    .ref-box{background:#f9fafb;border:1px solid rgba(12,68,124,.15);border-radius:8px;padding:1.25rem 1.5rem;font-size:14px;line-height:1.75;color:#1a1a18}
+    .ref-text{padding-left:2em;text-indent:-2em}
+    .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:1rem;align-items:center}
+    .btn-sec{background:#fff;border:0.5px solid rgba(0,0,0,.15);border-radius:6px;color:#1a1a18;cursor:pointer;font-size:12.5px;padding:8px 14px;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+    .btn-sec:hover{background:#f3f4f6}
+    .btn-copy{background:#0C447C;color:#fff;border:none}
+    .btn-copy:hover{background:#185FA5;color:#fff}
+    .copy-ok{color:#276749;font-size:12px;display:none;align-items:center;gap:4px}
+    .apa-note{font-size:11.5px;color:#5c5c59;background:rgba(24,95,165,.05);border-left:3px solid #185FA5;padding:10px 12px;border-radius:0 6px 6px 0;margin-top:1rem;line-height:1.55}
     #mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900}
     #mnav{position:fixed;top:0;right:-320px;width:300px;max-width:90vw;height:100%;background:#0C447C;z-index:901;transition:right .28s ease;overflow-y:auto;box-shadow:-4px 0 30px rgba(0,0,0,.3)}
     #mnav.open{right:0}
     .mn-close{display:flex;justify-content:flex-end;padding:1.1rem 1.25rem .5rem}
-    .mn-close button{background:none;border:none;color:#E6F1FB;font-size:22px;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
-    .mn-close button:hover{background:rgba(255,255,255,.12)}
+    .mn-close button{background:none;border:none;color:#E6F1FB;font-size:22px;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center}
     .mn-list{list-style:none;padding:0 .75rem;margin:0}
     .mn-list li a{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:0.5px solid rgba(255,255,255,.1);text-decoration:none;border-radius:8px;transition:background .15s}
     .mn-list li:last-child a{border-bottom:none}
@@ -35,13 +56,42 @@
     .mn-ico{font-size:22px;margin-top:2px;flex-shrink:0}
     .mn-label{font-size:14px;font-weight:600;color:#E6F1FB;margin-bottom:3px}
     .mn-sub{font-size:12px;color:#85B7EB;line-height:1.4}
+    @media(max-width:520px){.auth-row{flex-wrap:wrap}.auth-row input{min-width:calc(50% - 4px)}.date-row{flex-wrap:wrap}}
+    /* ── Formato grid ── */
+    .fmt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .fmt-btn{background:#f9f9f9;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:14px 10px 12px;text-align:center;position:relative;transition:box-shadow .15s}
+    .fmt-btn.active{background:#E6F1FB;border:2px solid #0C447C}
+    .fmt-btn.inactive{opacity:.72}
+    .fmt-icon{width:44px;height:44px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:22px}
+    .fmt-btn.active .fmt-icon{background:rgba(12,68,124,.13);color:#0C447C}
+    .fmt-btn.inactive .fmt-icon{background:rgba(0,0,0,.06);color:#b0b0aa}
+    .fmt-name{font-size:13px;font-weight:700;color:#1a1a18;margin-bottom:3px}
+    .fmt-btn.inactive .fmt-name{color:#9b9b97}
+    .fmt-desc{font-size:11px;color:#9b9b97;line-height:1.4}
+    .fmt-badge{display:inline-block;font-size:10px;font-weight:600;background:#FFF3DC;color:#8a5a08;border:0.5px solid rgba(190,120,20,.3);border-radius:10px;padding:2px 8px;margin-top:6px}
+    @media(max-width:480px){.fmt-grid{grid-template-columns:repeat(2,1fr)}}
+    /* ── Carrusel ── */
+    .car-wrap{background:#f0f4fa;border-left:3px solid #0C447C;border-radius:0 8px 8px 0;padding:14px 16px;min-height:72px}
+    .car-title{font-size:12.5px;font-weight:700;color:#0C447C;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .car-text{font-size:13px;color:#1a1a18;line-height:1.65}
+    .car-nav{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+    .car-btn{background:none;border:none;font-size:12.5px;color:#5c5c59;cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:4px;transition:color .15s}
+    .car-btn:hover{color:#0C447C}
+    .car-pos{font-size:12px;color:#9b9b97}
+    .dots{display:flex;gap:5px;justify-content:center;margin-top:10px}
+    .dot{width:7px;height:7px;border-radius:50%;background:rgba(12,68,124,.18);cursor:pointer;transition:background .2s}
+    .dot.on{background:#0C447C}
   </style>
 </head>
 <body>
+
 <header>
   <a class="logo" href="../index.html">
     <div class="logo-icon"><i class="ti ti-books" style="font-size:22px;color:#85B7EB" aria-hidden="true"></i></div>
-    <div><div class="logo-name">BIBNORM</div><div class="logo-sub">Sistema institucional de normalización bibliográfica</div></div>
+    <div>
+      <div class="logo-name">BIBNORM</div>
+      <div class="logo-sub">Generador automático de referencias bibliográficas</div>
+    </div>
   </a>
   <div style="display:flex;align-items:center;gap:4px">
     <a class="btn-ham" href="../index.html" title="Inicio" aria-label="Ir al inicio" style="text-decoration:none"><i class="ti ti-home" aria-hidden="true"></i></a>
@@ -61,17 +111,726 @@
 </nav>
 
 <main>
-  <div class="ic"><i class="ti ti-quote" style="color:#4F46E5" aria-hidden="true"></i></div>
-  <div class="tag">Próximamente</div>
-  <h1>Referencias bibliográficas</h1>
-  <p>Este módulo está actualmente en desarrollo. Próximamente podrás generar referencias bibliográficas automáticas en múltiples formatos: APA 7, Chicago, Vancouver, MLA y más. Solo ingresá los datos del recurso y el sistema generará la referencia correctamente formateada.</p>
-  <a class="btn-back" href="../index.html"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver al inicio</a>
+
+  <!-- Sección 1: Formato de referencia -->
+  <div class="card">
+    <div class="sec-hdr"><i class="ti ti-certificate" aria-hidden="true"></i> Formato de referencia</div>
+    <div class="fmt-grid">
+      <div class="fmt-btn active">
+        <div class="fmt-icon"><i class="ti ti-book-2" aria-hidden="true"></i></div>
+        <div class="fmt-name">APA 7</div>
+        <div class="fmt-desc">Ciencias sociales y educación</div>
+      </div>
+      <div class="fmt-btn inactive" title="Próximamente disponible">
+        <div class="fmt-icon"><i class="ti ti-book" aria-hidden="true"></i></div>
+        <div class="fmt-name">Chicago</div>
+        <div class="fmt-desc">Historia y humanidades</div>
+        <span class="fmt-badge">próximamente</span>
+      </div>
+      <div class="fmt-btn inactive" title="Próximamente disponible">
+        <div class="fmt-icon"><i class="ti ti-stethoscope" aria-hidden="true"></i></div>
+        <div class="fmt-name">Vancouver</div>
+        <div class="fmt-desc">Ciencias biomédicas</div>
+        <span class="fmt-badge">próximamente</span>
+      </div>
+      <div class="fmt-btn inactive" title="Próximamente disponible">
+        <div class="fmt-icon"><i class="ti ti-writing" aria-hidden="true"></i></div>
+        <div class="fmt-name">MLA</div>
+        <div class="fmt-desc">Literatura y artes</div>
+        <span class="fmt-badge">próximamente</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección 2: Tipo de material -->
+  <div class="card">
+    <div class="sec-hdr"><i class="ti ti-category" aria-hidden="true"></i> Tipo de material</div>
+    <div class="fg" style="margin-bottom:0">
+      <label for="tipo-sel">Selecciona el tipo de recurso a referenciar</label>
+      <select id="tipo-sel" onchange="onTipoChange()">
+        <option value="">— Elige un tipo —</option>
+        <option value="libro">Libro</option>
+        <option value="art_rev">Artículo de revista</option>
+        <option value="art_per">Artículo de periódico</option>
+        <option value="tesis">Tesis o disertación</option>
+        <option value="web">Página web</option>
+        <option value="ley">Ley o documento legal</option>
+        <option value="informe">Informe o reporte</option>
+        <option value="congreso">Congreso, seminario o conferencia</option>
+        <option value="pelicula">Película o serie de TV</option>
+        <option value="youtube">Video de YouTube</option>
+        <option value="podcast">Podcast</option>
+        <option value="cancion">Canción</option>
+        <option value="red_social">Red social (Twitter/Facebook/Instagram)</option>
+        <option value="wikipedia">Wikipedia</option>
+        <option value="capitulo">Capítulo en libro o antología</option>
+        <option value="diccionario">Diccionario</option>
+        <option value="app">Aplicación móvil (App)</option>
+        <option value="pdf">Archivo PDF</option>
+        <option value="ppt">PowerPoint</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Sección 3: Carrusel ¿Sabías que? -->
+  <div class="card">
+    <div class="car-title"><i class="ti ti-bulb" aria-hidden="true"></i> ¿Sabías que? · APA 7ª edición</div>
+    <div class="car-wrap">
+      <div class="car-text" id="car-text"></div>
+    </div>
+    <div class="dots" id="car-dots"></div>
+    <div class="car-nav">
+      <button class="car-btn" onclick="prevSlide()"><i class="ti ti-chevron-left" aria-hidden="true"></i> Anterior</button>
+      <span class="car-pos" id="car-pos">1 de 7</span>
+      <button class="car-btn" onclick="nextSlide()">Siguiente <i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <!-- Sección 4: Formulario dinámico -->
+  <div class="card" id="sec-form" style="display:none">
+    <div class="sec-hdr" id="form-hdr"><i class="ti ti-forms" aria-hidden="true"></i> Datos de la fuente</div>
+    <div id="form-body"></div>
+    <button class="btn-gen" onclick="generarRef()">
+      <i class="ti ti-sparkles" aria-hidden="true"></i> Generar referencia APA 7
+    </button>
+  </div>
+
+  <!-- Sección 5: Salida -->
+  <div class="card" id="sec-out" style="display:none">
+    <div class="sec-hdr"><i class="ti ti-quote" aria-hidden="true"></i> Referencia generada</div>
+    <div class="ref-box"><div class="ref-text" id="ref-display"></div></div>
+    <div class="btn-row">
+      <button class="btn-sec btn-copy" onclick="copiarRef()"><i class="ti ti-copy" aria-hidden="true"></i> Copiar referencia</button>
+      <button class="btn-sec" onclick="limpiarForm()"><i class="ti ti-eraser" aria-hidden="true"></i> Limpiar formulario</button>
+      <button class="btn-sec" onclick="otraRef()"><i class="ti ti-plus" aria-hidden="true"></i> Generar otra referencia</button>
+      <span class="copy-ok" id="copy-ok"><i class="ti ti-check" aria-hidden="true"></i> ¡Copiado!</span>
+    </div>
+    <div class="apa-note">
+      Esta referencia fue generada siguiendo las Normas APA 7ª edición. Se recomienda verificar con la fuente oficial en <strong>apastyle.apa.org</strong> antes de presentar en trabajos académicos formales.
+    </div>
+  </div>
+
 </main>
 
 <script>
-function openMbg(){document.getElementById('mbg').style.display='block';document.getElementById('mnav').classList.add('open');document.body.style.overflow='hidden';}
-function closeMbg(){document.getElementById('mbg').style.display='none';document.getElementById('mnav').classList.remove('open');document.body.style.overflow='';}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMbg();});
+var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+// ── Utilidades ────────────────────────────────────────────────────────
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function it(s) { return s ? '<em>' + esc(s) + '</em>' : ''; }
+function v(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+function getInitials(nombre) {
+  if (!nombre || !nombre.trim()) return '';
+  return nombre.trim().split(/\s+/).filter(Boolean).map(function(w){ return w[0].toUpperCase() + '.'; }).join(' ');
+}
+
+function formatAutores(lista) {
+  var fmt = lista.filter(function(a){ return a.ap && a.ap.trim(); }).map(function(a){
+    var ini = getInitials(a.nom);
+    return ini ? a.ap.trim() + ', ' + ini : a.ap.trim();
+  });
+  if (!fmt.length) return '';
+  if (fmt.length === 1) return fmt[0];
+  if (fmt.length === 2) return fmt[0] + ' y ' + fmt[1];
+  if (fmt.length <= 20) return fmt.slice(0,-1).join(', ') + ' y ' + fmt[fmt.length-1];
+  return fmt.slice(0,19).join(', ') + ', … ' + fmt[fmt.length-1];
+}
+
+function leerAutores(listId) {
+  var rows = document.querySelectorAll('#' + listId + ' .auth-row');
+  return Array.from(rows).map(function(r){
+    return { ap: r.querySelector('.auth-ap').value.trim(), nom: r.querySelector('.auth-nom').value.trim() };
+  }).filter(function(a){ return a.ap; });
+}
+
+function agregarAutor(listId) {
+  var list = document.getElementById(listId);
+  var row = document.createElement('div');
+  row.className = 'auth-row';
+  row.innerHTML = '<input type="text" class="auth-ap" placeholder="Apellido(s)">'
+    + '<input type="text" class="auth-nom" placeholder="Nombre(s) o inicial">'
+    + '<button type="button" class="btn-rm-auth" onclick="this.closest(\'.auth-row\').remove()" title="Eliminar">×</button>';
+  list.appendChild(row);
+}
+
+function formatFecha(anio, mes, dia) {
+  var f = anio || '';
+  if (mes && dia) f += ', ' + dia + ' de ' + mes;
+  else if (mes) f += ', ' + mes;
+  return f || 's.f.';
+}
+
+function formatDoi(val) {
+  if (!val) return '';
+  if (/^10\./.test(val)) return 'https://doi.org/' + val;
+  return val;
+}
+
+// ── Constructores de campos ────────────────────────────────────────
+
+function fAutores(listId, label, opcional) {
+  var opt = opcional ? '<span class="opt">(opcional)</span>' : '';
+  return '<div class="fg"><label>' + label + opt + '</label>'
+    + '<div id="' + listId + '">'
+    + '<div class="auth-row"><input type="text" class="auth-ap" placeholder="Apellido(s)"><input type="text" class="auth-nom" placeholder="Nombre(s) o inicial"></div>'
+    + '</div>'
+    + '<button type="button" class="btn-add" onclick="agregarAutor(\'' + listId + '\')">'
+    + '<i class="ti ti-user-plus" aria-hidden="true"></i> Agregar autor</button></div>';
+}
+
+function fText(id, label, ph, opcional, hint) {
+  var opt = opcional ? '<span class="opt">(opcional)</span>' : '';
+  var h = hint ? '<div class="hint">' + hint + '</div>' : '';
+  return '<div class="fg"><label for="' + id + '">' + label + opt + '</label>'
+    + '<input type="text" id="' + id + '" placeholder="' + (ph||'') + '">' + h + '</div>';
+}
+
+function fSel(id, label, opts) {
+  var o = opts.map(function(x){ return '<option value="' + esc(x) + '">' + esc(x) + '</option>'; }).join('');
+  return '<div class="fg"><label for="' + id + '">' + label + '</label>'
+    + '<select id="' + id + '"><option value="">— Seleccionar —</option>' + o + '</select></div>';
+}
+
+function fFecha(dId, mId, yId, label, opcional) {
+  var opt = opcional ? '<span class="opt">(opcional)</span>' : '';
+  var mo = MESES.map(function(m){ return '<option value="' + m + '">' + m.charAt(0).toUpperCase()+m.slice(1) + '</option>'; }).join('');
+  return '<div class="fg"><label>' + label + opt + '</label>'
+    + '<div class="date-row">'
+    + '<div><input type="number" id="' + dId + '" placeholder="Día" min="1" max="31"></div>'
+    + '<div><select id="' + mId + '"><option value="">Mes</option>' + mo + '</select></div>'
+    + '<div><input type="number" id="' + yId + '" placeholder="Año" min="1800" max="2100"></div>'
+    + '</div></div>';
+}
+
+// ── Definición de formularios por tipo ────────────────────────────
+
+var FORMS = {
+  libro: function(){
+    return fAutores('aut-list','Autor(es)')
+      + fText('anio','Año de publicación','ej. 2024')
+      + fText('titulo','Título del libro','')
+      + fText('edicion','Número de edición','ej. 3', true, 'Solo si no es la primera edición')
+      + fText('editorial','Editorial','')
+      + fText('doi_url','DOI o URL','https://doi.org/... o https://...', true);
+  },
+  art_rev: function(){
+    return fAutores('aut-list','Autor(es)')
+      + fText('anio','Año de publicación','ej. 2024')
+      + fText('titulo_art','Título del artículo','')
+      + fText('nombre_rev','Nombre de la revista','')
+      + fText('volumen','Volumen','ej. 7')
+      + fText('numero','Número de la revista','ej. 12')
+      + fText('paginas','Páginas','ej. 45-89')
+      + fText('doi_url','DOI o URL','https://doi.org/...');
+  },
+  art_per: function(){
+    return fAutores('aut-list','Autor(es)')
+      + fFecha('dia','mes','anio','Fecha de publicación')
+      + fText('titulo_art','Título del artículo','')
+      + fText('nombre_per','Nombre del periódico','')
+      + fText('url','URL','https://...');
+  },
+  tesis: function(){
+    return fAutores('aut-list','Autor(es)')
+      + fText('anio','Año','')
+      + fText('titulo','Título de la tesis','')
+      + fSel('tipo_tesis','Tipo de trabajo',['Tesis doctoral','Maestría','Trabajo fin de grado','Trabajo fin de máster'])
+      + fText('universidad','Universidad o institución','')
+      + fText('repositorio','Repositorio o base de datos','ej. ProQuest Dissertations', true)
+      + fText('url','URL','https://...', true);
+  },
+  web: function(){
+    return fAutores('aut-list','Autor(es) o nombre de la organización', true)
+      + '<div class="fg"><label>Año <span class="opt">o "s.f." si no tiene fecha</span></label>'
+      + '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
+      + '<input type="text" id="anio" placeholder="ej. 2024" style="max-width:160px">'
+      + '<label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#5c5c59;font-weight:400;text-transform:none;letter-spacing:0;white-space:nowrap;cursor:pointer">'
+      + '<input type="checkbox" id="chk_sf" onchange="var a=document.getElementById(\'anio\');a.value=this.checked?\'s.f.\':\'\'"> Sin fecha (s.f.)</label>'
+      + '</div></div>'
+      + fText('titulo_pag','Título de la página','')
+      + fText('nombre_sitio','Nombre del sitio web','')
+      + fText('url','URL','https://...');
+  },
+  ley: function(){
+    return fText('nombre_ley','Nombre de la ley','')
+      + fText('numero_ley','Número de la ley','ej. 19628')
+      + fText('anio','Año','')
+      + fText('boletin','Boletín oficial o fuente','ej. Diario Oficial, BOE')
+      + fText('url','URL','https://...', true);
+  },
+  informe: function(){
+    return fAutores('aut-list','Autor(es) o nombre de la organización')
+      + fText('anio','Año','')
+      + fText('titulo','Título del informe','')
+      + fText('organizacion','Organización publicadora','')
+      + fText('url','URL','https://...');
+  },
+  congreso: function(){
+    return fAutores('aut-list','Autor(es)')
+      + fText('fechas','Fechas del evento','ej. 15-17 de octubre de 2023')
+      + fText('titulo_pres','Título de la presentación','')
+      + fSel('tipo_pres','Tipo de presentación',['Ponencia','Discurso principal','Póster'])
+      + fText('nombre_cong','Nombre del congreso o seminario','')
+      + fText('ciudad_pais','Ciudad y país','ej. Buenos Aires, Argentina')
+      + fText('url','URL','https://...', true);
+  },
+  pelicula: function(){
+    return fText('director','Nombre del director','ej. Villeneuve, D.', true)
+      + fText('anio','Año','')
+      + fText('titulo','Título','')
+      + fSel('tipo_av','Tipo',['Película','Serie de TV'])
+      + fText('productora','Productora o estudio','');
+  },
+  youtube: function(){
+    return fText('canal','Nombre o usuario del canal','')
+      + fFecha('dia','mes','anio','Fecha de publicación')
+      + fText('titulo_video','Título del video','')
+      + fText('url','URL del video','https://www.youtube.com/watch?v=...');
+  },
+  podcast: function(){
+    return fAutores('aut-list','Presentador(es)')
+      + fFecha('dia','mes','anio','Fecha del episodio')
+      + fText('titulo_ep','Título del episodio','')
+      + fText('nombre_pod','Nombre del podcast','')
+      + fText('url','URL','https://...');
+  },
+  cancion: function(){
+    return fText('artista','Nombre del artista','')
+      + fText('anio','Año','')
+      + fText('titulo_can','Título de la canción','')
+      + fText('album','Nombre del álbum','')
+      + fText('discografica','Discográfica o plataforma','ej. Sony Music, Spotify');
+  },
+  red_social: function(){
+    return fAutores('aut-list','Apellido(s) o nombre del usuario')
+      + fText('arroba','Nombre de usuario (con @)','@usuario', true)
+      + fFecha('dia','mes','anio','Fecha de la publicación')
+      + fText('palabras','Primeras palabras del post','Hasta 20 palabras del texto del post',false,'Escribe las primeras palabras tal como aparecen en el post')
+      + fSel('red','Red social',['Twitter/X','Facebook','Instagram'])
+      + fText('url','URL del post','https://...');
+  },
+  wikipedia: function(){
+    return fText('titulo_art','Título del artículo','')
+      + fFecha('dia','mes','anio','Fecha de la versión consultada')
+      + fText('url','URL del artículo','https://es.wikipedia.org/wiki/...');
+  },
+  capitulo: function(){
+    return fAutores('aut-list','Autor(es) del capítulo')
+      + fText('anio','Año','')
+      + fText('titulo_cap','Título del capítulo','')
+      + fAutores('ed-list','Editor(es) del libro')
+      + fText('titulo_lib','Título del libro','')
+      + fText('paginas','Páginas del capítulo','ej. 45-89')
+      + fText('editorial','Editorial','')
+      + fText('doi_url','DOI o URL','https://doi.org/... o https://...', true);
+  },
+  diccionario: function(){
+    return fText('entidad','Nombre de la entidad o autor','')
+      + fText('anio','Año','ej. 2024 o s.f.')
+      + fText('termino','Término consultado','')
+      + fText('nombre_dic','Nombre del diccionario','')
+      + fText('url','URL','https://...');
+  },
+  app: function(){
+    return fText('empresa','Nombre de la empresa o desarrollador','')
+      + fText('anio','Año','')
+      + fText('nombre_app','Nombre de la app','')
+      + fText('version','Versión','ej. 4.2.1')
+      + fText('sistema_op','Sistema operativo','ej. iOS, Android')
+      + fSel('tienda','Tienda',['App Store','Google Play'])
+      + fText('url','URL','https://...', true);
+  },
+  pdf: function(){
+    return fAutores('aut-list','Autor(es)')
+      + fText('anio','Año','')
+      + fText('titulo','Título del documento','')
+      + fText('organizacion','Organización o fuente','')
+      + fText('url','URL del PDF','https://...');
+  },
+  ppt: function(){
+    return fAutores('aut-list','Autor(es)')
+      + fText('anio','Año','')
+      + fText('titulo','Título de la presentación','')
+      + fText('institucion','Institución o universidad','')
+      + fText('url','URL','https://...', true);
+  }
+};
+
+// ── Generadores de referencia ──────────────────────────────────────
+
+var GEN = {
+  libro: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var anio = v('anio')||'s.f.'; var titulo = v('titulo');
+    var ed = v('edicion'); var editorial = v('editorial'); var doi = formatDoi(v('doi_url'));
+    if (!titulo) return null;
+    var html = (aut ? esc(aut)+'. ' : '') + '('+esc(anio)+'). ' + it(titulo);
+    if (ed) html += ' ('+esc(ed)+'&ordf; ed.)';
+    html += '.';
+    if (editorial) html += ' '+esc(editorial)+'.';
+    if (doi) html += ' <a href="'+esc(doi)+'" style="color:#185FA5">'+esc(doi)+'</a>';
+    return html;
+  },
+  art_rev: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var anio = v('anio')||'s.f.'; var titulo = v('titulo_art');
+    var rev = v('nombre_rev'); var vol = v('volumen'); var num = v('numero');
+    var pags = v('paginas'); var doi = formatDoi(v('doi_url'));
+    if (!titulo) return null;
+    var html = (aut ? esc(aut)+'. ' : '') + '('+esc(anio)+'). ' + esc(titulo) + '.';
+    if (rev) {
+      html += ' ' + it(rev);
+      if (vol) { html += ', ' + it(vol); if (num) html += '('+esc(num)+')'; }
+      if (pags) html += ', '+esc(pags);
+      html += '.';
+    }
+    if (doi) html += ' <a href="'+esc(doi)+'" style="color:#185FA5">'+esc(doi)+'</a>';
+    return html;
+  },
+  art_per: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var fecha = formatFecha(v('anio'), v('mes'), v('dia'));
+    var titulo = v('titulo_art'); var per = v('nombre_per'); var url = v('url');
+    if (!titulo) return null;
+    var html = (aut ? esc(aut)+'. ' : '') + '('+esc(fecha)+'). ' + esc(titulo) + '.';
+    if (per) html += ' '+it(per)+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  tesis: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var anio = v('anio')||'s.f.'; var titulo = v('titulo');
+    var tipo = v('tipo_tesis'); var uni = v('universidad');
+    var repo = v('repositorio'); var url = v('url');
+    if (!titulo) return null;
+    var bracket = [tipo, uni].filter(Boolean).join(', ');
+    var html = (aut ? esc(aut)+'. ' : '') + '('+esc(anio)+'). ' + it(titulo);
+    if (bracket) html += ' ['+esc(bracket)+']';
+    html += '.';
+    if (repo) html += ' '+esc(repo)+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  web: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var anio = v('anio')||'s.f.'; var titulo = v('titulo_pag');
+    var sitio = v('nombre_sitio'); var url = v('url');
+    if (!titulo) return null;
+    var html;
+    if (aut) {
+      html = esc(aut)+'. ('+esc(anio)+'). '+esc(titulo)+'.';
+    } else {
+      html = esc(titulo)+'. ('+esc(anio)+').';
+    }
+    if (sitio) html += ' '+it(sitio)+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  ley: function(){
+    var nombre = v('nombre_ley'); var num = v('numero_ley');
+    var anio = v('anio')||'s.f.'; var boletin = v('boletin'); var url = v('url');
+    if (!nombre) return null;
+    var html = esc(nombre);
+    if (num) html += ', N.&ordm; '+esc(num);
+    html += '. ('+esc(anio)+').';
+    if (boletin) html += ' '+esc(boletin)+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  informe: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var anio = v('anio')||'s.f.'; var titulo = v('titulo');
+    var org = v('organizacion'); var url = v('url');
+    if (!titulo) return null;
+    var html = (aut ? esc(aut)+'. ' : '') + '('+esc(anio)+'). ' + it(titulo) + '.';
+    if (org) html += ' '+esc(org)+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  congreso: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var fechas = v('fechas'); var titulo = v('titulo_pres');
+    var tipo = v('tipo_pres'); var cong = v('nombre_cong');
+    var ciudad = v('ciudad_pais'); var url = v('url');
+    if (!titulo) return null;
+    var html = (aut ? esc(aut)+'. ' : '') + (fechas ? '('+esc(fechas)+'). ' : '');
+    html += esc(titulo);
+    if (tipo) html += ' ['+esc(tipo)+']';
+    html += '.';
+    if (cong) html += ' '+it(cong);
+    if (ciudad) html += ', '+esc(ciudad);
+    html += '.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  pelicula: function(){
+    var dir = v('director'); var anio = v('anio')||'s.f.';
+    var titulo = v('titulo'); var tipo = v('tipo_av')||'Película'; var prod = v('productora');
+    if (!titulo) return null;
+    var html = (dir ? esc(dir)+' (Director). ' : '') + '('+esc(anio)+'). ' + it(titulo) + ' ['+esc(tipo)+'].';
+    if (prod) html += ' '+esc(prod)+'.';
+    return html;
+  },
+  youtube: function(){
+    var canal = v('canal');
+    var fecha = formatFecha(v('anio'), v('mes'), v('dia'));
+    var titulo = v('titulo_video'); var url = v('url');
+    if (!titulo) return null;
+    var html = (canal ? esc(canal)+'. ' : '') + '('+esc(fecha)+'). ' + it(titulo) + ' [Video]. YouTube.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  podcast: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var fecha = formatFecha(v('anio'), v('mes'), v('dia'));
+    var ep = v('titulo_ep'); var pod = v('nombre_pod'); var url = v('url');
+    if (!ep) return null;
+    var html = (aut ? esc(aut)+'. ' : '') + '('+esc(fecha)+'). ' + it(ep) + ' [Episodio de podcast].';
+    if (pod) html += ' In '+it(pod)+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  cancion: function(){
+    var artista = v('artista'); var anio = v('anio')||'s.f.';
+    var titulo = v('titulo_can'); var album = v('album'); var disc = v('discografica');
+    if (!titulo) return null;
+    var html = (artista ? esc(artista)+'. ' : '') + '('+esc(anio)+'). ' + esc(titulo) + ' [Canción].';
+    if (album) html += ' In '+it(album)+'.';
+    if (disc) html += ' '+esc(disc)+'.';
+    return html;
+  },
+  red_social: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var arroba = v('arroba');
+    var fecha = formatFecha(v('anio'), v('mes'), v('dia'));
+    var palabras = v('palabras'); var red = v('red')||'Twitter/X'; var url = v('url');
+    if (!palabras) return null;
+    var autor_str = '';
+    if (aut) { autor_str = esc(aut); if (arroba) autor_str += ' ['+esc(arroba)+']'; }
+    else if (arroba) { autor_str = esc(arroba); }
+    var html = (autor_str ? autor_str+'. ' : '') + '('+esc(fecha)+'). ' + esc(palabras) + ' [Publicaci&oacute;n en '+esc(red)+'].';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  wikipedia: function(){
+    var titulo = v('titulo_art');
+    var fecha = formatFecha(v('anio'), v('mes'), v('dia'));
+    var url = v('url');
+    if (!titulo) return null;
+    var html = esc(titulo)+'. ('+esc(fecha)+'). In '+it('Wikipedia')+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  capitulo: function(){
+    var aut_cap = formatAutores(leerAutores('aut-list'));
+    var anio = v('anio')||'s.f.'; var titulo_cap = v('titulo_cap');
+    var editores = leerAutores('ed-list');
+    var titulo_lib = v('titulo_lib'); var pags = v('paginas');
+    var editorial = v('editorial'); var doi = formatDoi(v('doi_url'));
+    if (!titulo_cap) return null;
+    var html = (aut_cap ? esc(aut_cap)+'. ' : '') + '('+esc(anio)+'). ' + esc(titulo_cap) + '.';
+    if (editores.length || titulo_lib) {
+      html += ' In ';
+      if (editores.length) {
+        var ed_fmt = editores.map(function(e){
+          var ini = getInitials(e.nom);
+          return ini ? ini+' '+esc(e.ap) : esc(e.ap);
+        });
+        html += ed_fmt.join(', ') + (editores.length===1 ? ' (Ed.),' : ' (Eds.),');
+      }
+      if (titulo_lib) {
+        html += ' '+it(titulo_lib);
+        if (pags) html += ' (pp. '+esc(pags)+')';
+      }
+      html += '.';
+    }
+    if (editorial) html += ' '+esc(editorial)+'.';
+    if (doi) html += ' <a href="'+esc(doi)+'" style="color:#185FA5">'+esc(doi)+'</a>';
+    return html;
+  },
+  diccionario: function(){
+    var entidad = v('entidad'); var anio = v('anio')||'s.f.';
+    var termino = v('termino'); var dic = v('nombre_dic'); var url = v('url');
+    if (!termino) return null;
+    var html = (entidad ? esc(entidad)+'. ' : '') + '('+esc(anio)+'). ' + esc(termino) + '.';
+    if (dic) html += ' In '+it(dic)+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  app: function(){
+    var empresa = v('empresa'); var anio = v('anio')||'s.f.';
+    var nombre = v('nombre_app'); var ver = v('version');
+    var so = v('sistema_op'); var tienda = v('tienda'); var url = v('url');
+    if (!nombre) return null;
+    var html = (empresa ? esc(empresa)+'. ' : '') + '('+esc(anio)+'). ' + it(nombre);
+    if (ver) html += ' (Versi&oacute;n '+esc(ver)+')';
+    html += ' [Aplicaci&oacute;n m&oacute;vil].';
+    if (so) html += ' '+esc(so)+'.';
+    if (tienda) html += ' '+esc(tienda)+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  pdf: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var anio = v('anio')||'s.f.'; var titulo = v('titulo');
+    var org = v('organizacion'); var url = v('url');
+    if (!titulo) return null;
+    var html = (aut ? esc(aut)+'. ' : '') + '('+esc(anio)+'). ' + it(titulo) + '.';
+    if (org) html += ' '+esc(org)+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  },
+  ppt: function(){
+    var aut = formatAutores(leerAutores('aut-list'));
+    var anio = v('anio')||'s.f.'; var titulo = v('titulo');
+    var inst = v('institucion'); var url = v('url');
+    if (!titulo) return null;
+    var html = (aut ? esc(aut)+'. ' : '') + '('+esc(anio)+'). ' + it(titulo) + ' [Presentaci&oacute;n de diapositivas].';
+    if (inst) html += ' '+esc(inst)+'.';
+    if (url) html += ' <a href="'+esc(url)+'" style="color:#185FA5">'+esc(url)+'</a>';
+    return html;
+  }
+};
+
+// ── Etiquetas ──────────────────────────────────────────────────────
+
+var LABELS = {
+  libro:'Libro', art_rev:'Artículo de revista', art_per:'Artículo de periódico',
+  tesis:'Tesis o disertación', web:'Página web', ley:'Ley o documento legal',
+  informe:'Informe o reporte', congreso:'Congreso, seminario o conferencia',
+  pelicula:'Película o serie de TV', youtube:'Video de YouTube', podcast:'Podcast',
+  cancion:'Canción', red_social:'Red social', wikipedia:'Wikipedia',
+  capitulo:'Capítulo en libro o antología', diccionario:'Diccionario',
+  app:'Aplicación móvil (App)', pdf:'Archivo PDF', ppt:'PowerPoint'
+};
+
+// ── Controladores UI ────────────────────────────────────────────────
+
+function onTipoChange() {
+  var tipo = document.getElementById('tipo-sel').value;
+  var secF = document.getElementById('sec-form');
+  var secO = document.getElementById('sec-out');
+  secO.style.display = 'none';
+  if (!tipo || !FORMS[tipo]) { secF.style.display = 'none'; return; }
+  document.getElementById('form-hdr').innerHTML = '<i class="ti ti-forms" aria-hidden="true"></i> ' + LABELS[tipo];
+  document.getElementById('form-body').innerHTML = FORMS[tipo]();
+  secF.style.display = 'block';
+  secF.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function generarRef() {
+  var tipo = document.getElementById('tipo-sel').value;
+  if (!tipo || !GEN[tipo]) return;
+  var html = GEN[tipo]();
+  if (!html) { alert('Por favor completa los campos obligatorios antes de generar la referencia.'); return; }
+  document.getElementById('ref-display').innerHTML = html;
+  var secO = document.getElementById('sec-out');
+  secO.style.display = 'block';
+  secO.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+async function copiarRef() {
+  var el = document.getElementById('ref-display');
+  var texto = el.innerText;
+  try {
+    await navigator.clipboard.writeText(texto);
+  } catch(e) {
+    var ta = document.createElement('textarea');
+    ta.value = texto; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e2) {}
+    document.body.removeChild(ta);
+  }
+  var ok = document.getElementById('copy-ok');
+  ok.style.display = 'inline-flex';
+  setTimeout(function(){ ok.style.display = 'none'; }, 2500);
+}
+
+function limpiarForm() {
+  var tipo = document.getElementById('tipo-sel').value;
+  if (tipo && FORMS[tipo]) { document.getElementById('form-body').innerHTML = FORMS[tipo](); }
+  document.getElementById('sec-out').style.display = 'none';
+}
+
+function otraRef() {
+  var tipo = document.getElementById('tipo-sel').value;
+  if (tipo && FORMS[tipo]) { document.getElementById('form-body').innerHTML = FORMS[tipo](); }
+  document.getElementById('sec-out').style.display = 'none';
+  document.getElementById('sec-form').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function openMbg(){ document.getElementById('mbg').style.display='block'; document.getElementById('mnav').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeMbg(){ document.getElementById('mbg').style.display='none'; document.getElementById('mnav').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeMbg(); });
+
+// ── Carrusel ¿Sabías que? ────────────────────────────────────────────
+// Expansión futura: al activar Chicago, Vancouver o MLA, llamar a
+// setCarruselFormato('chicago'|'vancouver'|'mla') para cambiar el
+// título del carrusel y cargar las curiosidades del formato seleccionado.
+// Cada formato debe tener su propio array en TIPS_POR_FORMATO con
+// mínimo 5 curiosidades basadas en su manual oficial.
+
+var TIPS_POR_FORMATO = {
+  apa7: [
+    'En APA 7 se pueden incluir hasta <strong>20 autores</strong> en una referencia. Si hay 21 o más, se listan los primeros 19, luego se agrega "…" y el nombre del último autor.',
+    'Un <strong>DOI</strong> siempre es preferible a una URL porque el DOI no cambia con el tiempo, lo que garantiza un acceso permanente a la fuente.',
+    'Los títulos de <strong>libros, revistas y tesis</strong> deben escribirse en cursiva en APA 7. Los títulos de artículos, en cambio, van sin cursiva ni comillas.',
+    'En APA 7, la <strong>sangría francesa</strong> es obligatoria en la lista de referencias. La primera línea va al margen izquierdo y las siguientes se indentan 0.5 pulgadas.',
+    'Si una fuente no tiene autor, la referencia comienza directamente con el título. Si tampoco tiene fecha, se utiliza la abreviatura <strong>"s.f."</strong> (sin fecha).',
+    'Los nombres de los autores en APA 7 siempre van en formato: <strong>Apellido, Inicial(es) del nombre</strong>. Ejemplo: García, J. A.',
+    'APA 7 no requiere indicar la 1ª edición. A partir de la <strong>2ª edición</strong>, debes incluir el número entre paréntesis después del título.'
+  ]
+  // chicago: [...],  // pendiente — basado en Chicago Manual of Style 17ª ed.
+  // vancouver: [...], // pendiente — basado en estilo Vancouver ICMJE
+  // mla: [...]        // pendiente — basado en MLA Handbook 9ª ed.
+};
+
+var carIdx = 0;
+var carTips = TIPS_POR_FORMATO.apa7;
+var carTimer = null;
+
+function renderCarrusel() {
+  document.getElementById('car-text').innerHTML = carTips[carIdx];
+  document.getElementById('car-pos').textContent = (carIdx + 1) + ' de ' + carTips.length;
+  var dots = document.getElementById('car-dots').children;
+  for (var i = 0; i < dots.length; i++) {
+    dots[i].className = 'dot' + (i === carIdx ? ' on' : '');
+  }
+}
+
+function nextSlide() {
+  carIdx = (carIdx + 1) % carTips.length;
+  renderCarrusel();
+  resetCarTimer();
+}
+
+function prevSlide() {
+  carIdx = (carIdx - 1 + carTips.length) % carTips.length;
+  renderCarrusel();
+  resetCarTimer();
+}
+
+function resetCarTimer() {
+  if (carTimer) clearInterval(carTimer);
+  carTimer = setInterval(nextSlide, 6000);
+}
+
+(function initCarrusel() {
+  var dots = document.getElementById('car-dots');
+  carTips.forEach(function(_, i) {
+    var d = document.createElement('span');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    d.onclick = (function(idx){ return function(){ carIdx = idx; renderCarrusel(); resetCarTimer(); }; })(i);
+    dots.appendChild(d);
+  });
+  renderCarrusel();
+  resetCarTimer();
+})();
 </script>
 </body>
 </html>
