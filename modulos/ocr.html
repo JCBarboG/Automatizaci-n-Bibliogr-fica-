@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BIBNORM — Extracción con OCR</title>
+  <title>Gnos — Extracción con OCR</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -13,15 +13,9 @@
     .logo-icon{width:40px;height:40px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:9px;display:flex;align-items:center;justify-content:center}
     .logo-name{font-size:19px;font-weight:700;color:#E6F1FB;letter-spacing:.5px;line-height:1}
     .logo-sub{font-size:11px;color:#85B7EB;margin-top:2px}
+    .logo-sub-short{display:none;font-size:11px;color:#85B7EB;margin-top:2px}
     .btn-ham{background:none;border:none;cursor:pointer;color:#E6F1FB;font-size:24px;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .15s}
     .btn-ham:hover{background:rgba(255,255,255,.12)}
-    main{max-width:560px;margin:0 auto;padding:5rem 1.5rem;text-align:center}
-    .ic{width:100px;height:100px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.75rem;font-size:48px;background:rgba(0,137,123,.11)}
-    h1{font-size:24px;font-weight:700;color:#0C447C;margin-bottom:.75rem}
-    .tag{display:inline-block;font-size:12px;font-weight:600;background:rgba(24,95,165,.1);color:#185FA5;padding:4px 12px;border-radius:20px;margin-bottom:1.5rem}
-    p{font-size:14px;color:#5c5c59;line-height:1.6;margin-bottom:2rem}
-    .btn-back{display:inline-flex;align-items:center;gap:8px;background:#0C447C;color:#fff;text-decoration:none;padding:11px 22px;border-radius:9px;font-size:13px;font-weight:600;transition:background .15s}
-    .btn-back:hover{background:#185FA5}
     #mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900}
     #mnav{position:fixed;top:0;right:-320px;width:300px;max-width:90vw;height:100%;background:#0C447C;z-index:901;transition:right .28s ease;overflow-y:auto;box-shadow:-4px 0 30px rgba(0,0,0,.3)}
     #mnav.open{right:0}
@@ -35,13 +29,93 @@
     .mn-ico{font-size:22px;margin-top:2px;flex-shrink:0}
     .mn-label{font-size:14px;font-weight:600;color:#E6F1FB;margin-bottom:3px}
     .mn-sub{font-size:12px;color:#85B7EB;line-height:1.4}
+    main{max-width:800px;margin:0 auto;padding:2rem 1.5rem 5rem}
+    .card{background:#fff;border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;box-shadow:0 2px 14px rgba(12,68,124,.07),0 1px 3px rgba(0,0,0,.04);border:0.5px solid rgba(12,68,124,.06)}
+    .card-hdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:0.5px solid #ebebeb}
+    .card-hdr-icon{width:38px;height:38px;border-radius:9px;background:rgba(24,95,165,.1);display:flex;align-items:center;justify-content:center;font-size:20px;color:#185FA5;flex-shrink:0}
+    .card-hdr-text h2{font-size:14.5px;font-weight:700;color:#0C447C;margin-bottom:3px}
+    .card-hdr-text p{font-size:12px;color:#5c5c59;line-height:1.4}
+    .chk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .chk-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;background:#f9f9f8;border:0.5px solid rgba(0,0,0,.09);cursor:pointer;min-height:44px;transition:background .12s,border-color .12s}
+    .chk-item:hover{background:#EAF0FA;border-color:rgba(24,95,165,.22)}
+    .chk-item input[type=checkbox]{width:15px;height:15px;cursor:pointer;flex-shrink:0;accent-color:#0C447C}
+    .chk-label{font-size:12.5px;color:#1a1a18;cursor:pointer;line-height:1.3}
+    .btn-toggle{background:none;border:none;cursor:pointer;font-size:12px;color:#185FA5;padding:6px 0;margin-top:.5rem;text-decoration:underline;text-underline-offset:2px;font-family:inherit}
+    .btn-toggle:hover{color:#0C447C}
+    .drop-zone{border:2px dashed rgba(24,95,165,.3);border-radius:12px;padding:2.25rem 1.5rem;text-align:center;background:#f9fbfe;cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:.875rem}
+    .drop-zone:hover,.drop-zone.dragover{background:#EAF0FA;border-color:#185FA5}
+    .drop-zone-icon{font-size:38px;color:#185FA5;margin-bottom:.625rem}
+    .drop-zone .dz-title{font-size:13px;color:#1a1a18;margin-bottom:.3rem}
+    .drop-zone .dz-hint{font-size:11.5px;color:#9b9b97}
+    .upload-btns{display:flex;gap:.75rem}
+    .btn-upload{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;border:0.5px solid rgba(0,0,0,.15);background:#fff;color:#1a1a18;font-family:inherit;transition:background .15s}
+    .btn-upload:hover{background:#f4f4f2}
+    .btn-camera{background:#0C447C;color:#fff;border:none}
+    .btn-camera:hover{background:#185FA5;color:#fff}
+    .preview-wrap{border-radius:10px;overflow:hidden;background:#f4f4f2;max-height:380px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+    .preview-wrap img{max-width:100%;max-height:380px;object-fit:contain;display:block}
+    .prog-wrap{margin:.75rem 0 1rem}
+    .prog-lbl{display:flex;justify-content:space-between;font-size:12px;color:#5c5c59;margin-bottom:5px}
+    .prog-bar{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden}
+    .prog-fill{height:100%;background:#185FA5;width:0%;transition:width .25s linear;border-radius:3px}
+    .tbl-wrap{overflow-x:auto;border-radius:8px;border:0.5px solid rgba(0,0,0,.1)}
+    .res-tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:280px}
+    .res-tbl th{background:#f4f4f2;color:#5c5c59;font-weight:600;font-size:11.5px;padding:8px 12px;border:0.5px solid rgba(0,0,0,.08);text-align:left;white-space:nowrap}
+    .res-tbl td{padding:9px 12px;border:0.5px solid rgba(0,0,0,.08);color:#1a1a18;vertical-align:top;min-width:100px}
+    .res-tbl td[contenteditable=true]{cursor:text}
+    .res-tbl td[contenteditable=true]:focus{background:#EAF0FA;outline:none}
+    .res-tbl td[contenteditable=true]:empty::before{content:'—';color:#b0b0a8}
+    .btn-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem}
+    .btn-primary{background:#0C447C;color:#fff;border:none;padding:11px 22px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;gap:7px;font-family:inherit;transition:background .15s}
+    .btn-primary:hover{background:#185FA5}
+    .btn-primary:disabled{opacity:.5;cursor:default}
+    .btn-secondary{background:#fff;color:#1a1a18;border:0.5px solid rgba(0,0,0,.15);padding:11px 22px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;gap:7px;font-family:inherit;transition:background .15s}
+    .btn-secondary:hover{background:#f4f4f2}
+    .btn-secondary:disabled{opacity:.5;cursor:default}
+    .btn-dng{color:#9b1c1c;border-color:rgba(155,28,28,.25);background:#fef9f9}
+    .btn-dng:hover{background:#FEE9E9}
+    .notice{display:none;margin-top:.875rem;padding:10px 13px;background:#FFF3DC;border:0.5px solid rgba(190,120,20,.3);border-radius:8px;font-size:12.5px;color:#8a5a08;line-height:1.5}
+    .modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;align-items:center;justify-content:center;padding:1rem}
+    .modal-ov.open{display:flex}
+    .modal-box{background:#fff;border-radius:16px;padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+    .modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+    .modal-hdr h3{font-size:15px;font-weight:700;color:#0C447C}
+    .modal-close{background:none;border:none;cursor:pointer;font-size:22px;color:#5c5c59;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-family:inherit;transition:background .12s}
+    .modal-close:hover{background:#f0f0ee}
+    #cam-video{width:100%;border-radius:8px;max-height:280px;object-fit:cover;background:#111;display:block}
+    .cam-btns{display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap}
+    .cam-err{display:none;margin-top:.75rem;padding:10px 13px;background:#FEE9E9;border:0.5px solid rgba(155,28,28,.25);border-radius:8px;font-size:13px;color:#9b1c1c}
+    @media(max-width:640px){
+      header{padding:0 1rem}
+      .logo-sub{display:none}
+      .logo-sub-short{display:block}
+      main{padding:1.5rem 1rem 4rem}
+      .chk-grid{grid-template-columns:1fr 1fr}
+      .drop-zone{display:none}
+      .upload-btns{flex-direction:column}
+      .preview-wrap{max-height:260px}
+      .preview-wrap img{max-height:260px}
+      .btn-row{flex-direction:column}
+      .btn-row .btn-primary,.btn-row .btn-secondary{justify-content:center}
+      .lbl-long{display:none}
+      .lbl-short{display:inline!important}
+    }
+    @media(max-width:380px){
+      .logo-name{font-size:16px}
+      .chk-label{font-size:11.5px}
+    }
   </style>
 </head>
 <body>
+
 <header>
   <a class="logo" href="../index.html">
     <div class="logo-icon"><i class="ti ti-books" style="font-size:22px;color:#85B7EB" aria-hidden="true"></i></div>
-    <div><div class="logo-name">BIBNORM</div><div class="logo-sub">Sistema institucional de normalización bibliográfica</div></div>
+    <div>
+      <div class="logo-name">Gnos</div>
+      <div class="logo-sub">Extracción de información bibliográfica · OCR</div>
+      <div class="logo-sub-short">OCR bibliográfico</div>
+    </div>
   </a>
   <div style="display:flex;align-items:center;gap:4px">
     <a class="btn-ham" href="../index.html" title="Inicio" aria-label="Ir al inicio" style="text-decoration:none"><i class="ti ti-home" aria-hidden="true"></i></a>
@@ -61,17 +135,478 @@
 </nav>
 
 <main>
-  <div class="ic"><i class="ti ti-camera" style="color:#00897B" aria-hidden="true"></i></div>
-  <div class="tag">Próximamente</div>
-  <h1>Extracción con OCR</h1>
-  <p>Este módulo está actualmente en desarrollo. Próximamente podrás tomar fotos de portadas o páginas de libros y extraer automáticamente la información bibliográfica usando tecnología OCR, lista para exportar a Excel.</p>
-  <a class="btn-back" href="../index.html"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver al inicio</a>
+
+  <!-- 1 · Campos a extraer -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-hdr-icon"><i class="ti ti-list-check" aria-hidden="true"></i></div>
+      <div class="card-hdr-text">
+        <h2>Campos a extraer</h2>
+        <p>Seleccioná los campos bibliográficos que querés detectar en la imagen.</p>
+      </div>
+    </div>
+    <div class="chk-grid" id="chk-grid"></div>
+    <button class="btn-toggle" id="btn-toggle" onclick="toggleAll()">Deseleccionar todos</button>
+  </div>
+
+  <!-- 2 · Imagen del recurso -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-hdr-icon"><i class="ti ti-photo" aria-hidden="true"></i></div>
+      <div class="card-hdr-text">
+        <h2>Imagen del recurso</h2>
+        <p>Adjuntá una imagen de la portada o de la página con datos bibliográficos.</p>
+      </div>
+    </div>
+    <div id="drop-zone" class="drop-zone" onclick="document.getElementById('file-input').click()" role="button" tabindex="0" aria-label="Zona de arrastre de imagen">
+      <div class="drop-zone-icon"><i class="ti ti-cloud-upload" aria-hidden="true"></i></div>
+      <p class="dz-title"><strong>Arrastrá la imagen aquí</strong> o hacé clic para seleccionar</p>
+      <p class="dz-hint">JPG · PNG · WEBP · hasta 10 MB</p>
+    </div>
+    <div class="upload-btns">
+      <button class="btn-upload" onclick="document.getElementById('file-input').click()">
+        <i class="ti ti-file-upload" aria-hidden="true"></i>
+        <span class="lbl-long">Adjuntar imagen</span><span class="lbl-short" style="display:none">Adjuntar</span>
+      </button>
+      <button class="btn-upload btn-camera" onclick="abrirCamara()">
+        <i class="ti ti-camera" aria-hidden="true"></i> Tomar foto
+      </button>
+    </div>
+    <input type="file" id="file-input" accept="image/*" style="display:none">
+  </div>
+
+  <!-- 3 · Previsualización -->
+  <div class="card" id="sec-preview" style="display:none">
+    <div class="card-hdr">
+      <div class="card-hdr-icon"><i class="ti ti-eye" aria-hidden="true"></i></div>
+      <div class="card-hdr-text">
+        <h2>Previsualización</h2>
+        <p>Revisá la imagen cargada antes de iniciar el escaneo OCR.</p>
+      </div>
+    </div>
+    <div class="preview-wrap">
+      <img id="preview-img" alt="Vista previa de la imagen cargada" src="">
+    </div>
+    <div id="ocr-prog" class="prog-wrap" style="display:none">
+      <div class="prog-lbl">
+        <span id="prog-lbl-txt">Iniciando…</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary btn-dng" id="btn-elim" onclick="eliminarImagen()">
+        <i class="ti ti-trash" aria-hidden="true"></i> Eliminar
+      </button>
+      <button class="btn-primary" id="btn-scan" onclick="escanear()">
+        <i class="ti ti-scan" aria-hidden="true"></i>
+        <span class="lbl-long">Escanear imagen</span><span class="lbl-short" style="display:none">Escanear</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 4 · Resultado extraído -->
+  <div class="card" id="sec-results" style="display:none">
+    <div class="card-hdr">
+      <div class="card-hdr-icon"><i class="ti ti-table" aria-hidden="true"></i></div>
+      <div class="card-hdr-text">
+        <h2>Resultado extraído</h2>
+        <p>Editá los campos directamente en la tabla. Los cambios se exportan tal como aparecen.</p>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="res-tbl">
+        <thead id="res-thead"></thead>
+        <tbody id="res-tbody"></tbody>
+      </table>
+    </div>
+    <div class="notice" id="notice-partial">
+      <i class="ti ti-info-circle" aria-hidden="true"></i>
+      Algunos campos no fueron detectados automáticamente. Revisá y completá los valores antes de exportar.
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="exportarExcel()">
+        <i class="ti ti-file-spreadsheet" aria-hidden="true"></i> Generar Excel
+      </button>
+      <button class="btn-secondary" onclick="limpiarTodo()">
+        <i class="ti ti-refresh" aria-hidden="true"></i> Limpiar
+      </button>
+    </div>
+  </div>
+
 </main>
 
+<!-- Cámara modal -->
+<div id="cam-modal" class="modal-ov">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3>Tomar foto</h3>
+      <button class="modal-close" onclick="cerrarCamara()" aria-label="Cerrar">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+    </div>
+    <video id="cam-video" autoplay playsinline muted></video>
+    <canvas id="cam-canvas" style="display:none"></canvas>
+    <div class="cam-btns">
+      <button class="btn-primary" onclick="capturarFoto()" style="flex:1;justify-content:center">
+        <i class="ti ti-camera" aria-hidden="true"></i> Capturar
+      </button>
+      <button class="btn-secondary" onclick="cerrarCamara()" style="flex:1;justify-content:center">
+        Cancelar
+      </button>
+    </div>
+    <div class="cam-err" id="cam-err"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script>
+// ── Navegación ────────────────────────────────────────────────────
 function openMbg(){document.getElementById('mbg').style.display='block';document.getElementById('mnav').classList.add('open');document.body.style.overflow='hidden';}
 function closeMbg(){document.getElementById('mbg').style.display='none';document.getElementById('mnav').classList.remove('open');document.body.style.overflow='';}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMbg();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeMbg();cerrarCamara();}});
+
+// ── Campos de extracción ──────────────────────────────────────────
+var CAMPOS = [
+  {id:'autor',      label:'Autor principal'},
+  {id:'titulo',     label:'Título'},
+  {id:'edicion',    label:'Edición'},
+  {id:'pie',        label:'Pie de imprenta'},
+  {id:'isbn',       label:'ISBN / ISSN'},
+  {id:'ddc',        label:'Clasificación DDC'},
+  {id:'desc',       label:'Descripción física'},
+  {id:'autor_sec',  label:'Autor(es) secundario(s)'},
+  {id:'traductor',  label:'Traductor(es)'},
+  {id:'materias',   label:'Términos de materia'},
+  {id:'notas',      label:'Notas'}
+];
+
+(function buildChkGrid(){
+  var grid = document.getElementById('chk-grid');
+  CAMPOS.forEach(function(c){
+    var div = document.createElement('div');
+    div.className = 'chk-item';
+    div.innerHTML = '<input type="checkbox" id="chk-'+c.id+'" checked aria-label="'+c.label+'">'
+                  + '<label class="chk-label" for="chk-'+c.id+'">'+c.label+'</label>';
+    grid.appendChild(div);
+  });
+})();
+
+var allChecked = true;
+function toggleAll(){
+  allChecked = !allChecked;
+  CAMPOS.forEach(function(c){document.getElementById('chk-'+c.id).checked = allChecked;});
+  document.getElementById('btn-toggle').textContent = allChecked ? 'Deseleccionar todos' : 'Seleccionar todos';
+}
+
+function getSelectedCampos(){
+  var sel = {};
+  CAMPOS.forEach(function(c){sel[c.id] = document.getElementById('chk-'+c.id).checked;});
+  return sel;
+}
+
+// ── Estado de imagen ──────────────────────────────────────────────
+var currentSrc = null;
+
+function mostrarImagen(src){
+  currentSrc = src;
+  document.getElementById('preview-img').src = src;
+  var sec = document.getElementById('sec-preview');
+  sec.style.display = 'block';
+  sec.scrollIntoView({behavior:'smooth', block:'nearest'});
+  document.getElementById('sec-results').style.display = 'none';
+}
+
+function eliminarImagen(){
+  currentSrc = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('preview-img').src = '';
+  document.getElementById('sec-preview').style.display = 'none';
+  document.getElementById('sec-results').style.display = 'none';
+  document.getElementById('ocr-prog').style.display = 'none';
+  setProgreso(0,'');
+}
+
+// ── Drag-and-drop ─────────────────────────────────────────────────
+(function(){
+  var dz = document.getElementById('drop-zone');
+  if (!dz) return;
+  dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('dragover');});
+  dz.addEventListener('dragleave',function(){dz.classList.remove('dragover');});
+  dz.addEventListener('drop',function(e){
+    e.preventDefault();dz.classList.remove('dragover');
+    var f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith('image/')) cargarArchivo(f);
+  });
+  dz.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){document.getElementById('file-input').click();}});
+})();
+
+document.getElementById('file-input').addEventListener('change',function(e){
+  var f = e.target.files[0];
+  if (f) cargarArchivo(f);
+});
+
+function cargarArchivo(file){
+  if (file.size > 10 * 1024 * 1024){alert('La imagen supera los 10 MB permitidos.'); return;}
+  var reader = new FileReader();
+  reader.onload = function(e){mostrarImagen(e.target.result);};
+  reader.readAsDataURL(file);
+}
+
+// ── Cámara ────────────────────────────────────────────────────────
+var camStream = null;
+
+function abrirCamara(){
+  var modal = document.getElementById('cam-modal');
+  var errEl = document.getElementById('cam-err');
+  errEl.style.display = 'none';
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}})
+    .then(function(stream){
+      camStream = stream;
+      document.getElementById('cam-video').srcObject = stream;
+    })
+    .catch(function(err){
+      errEl.textContent = 'No se pudo acceder a la cámara: ' + (err.message || err);
+      errEl.style.display = 'block';
+    });
+}
+
+function cerrarCamara(){
+  if (camStream){camStream.getTracks().forEach(function(t){t.stop();});camStream=null;}
+  var v = document.getElementById('cam-video');
+  v.srcObject = null;
+  document.getElementById('cam-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function capturarFoto(){
+  var v = document.getElementById('cam-video');
+  var c = document.getElementById('cam-canvas');
+  c.width = v.videoWidth || 640;
+  c.height = v.videoHeight || 480;
+  c.getContext('2d').drawImage(v, 0, 0);
+  var dataUrl = c.toDataURL('image/jpeg', 0.92);
+  cerrarCamara();
+  mostrarImagen(dataUrl);
+}
+
+// ── Progreso OCR ──────────────────────────────────────────────────
+function setProgreso(pct, label){
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  if (label) document.getElementById('prog-lbl-txt').textContent = label;
+}
+
+// ── Escanear con Tesseract.js ─────────────────────────────────────
+async function escanear(){
+  if (!currentSrc) return;
+  var campos = getSelectedCampos();
+  var btnScan = document.getElementById('btn-scan');
+  var btnElim = document.getElementById('btn-elim');
+  btnScan.disabled = true;
+  btnElim.disabled = true;
+  document.getElementById('ocr-prog').style.display = 'block';
+  document.getElementById('sec-results').style.display = 'none';
+  setProgreso(0,'Inicializando motor OCR…');
+  try {
+    var result = await Tesseract.recognize(
+      currentSrc,
+      'spa+eng',
+      {logger: function(m){
+        if (!m || !m.status) return;
+        if      (m.status === 'loading tesseract core')       setProgreso(5,  'Cargando motor OCR…');
+        else if (m.status === 'initializing api')             setProgreso(12, 'Inicializando API…');
+        else if (m.status === 'loading language traineddata') setProgreso(22, 'Cargando idioma…');
+        else if (m.status === 'initializing tesseract')       setProgreso(35, 'Preparando reconocimiento…');
+        else if (m.status === 'recognizing text')             setProgreso(40 + Math.round((m.progress||0)*55), 'Reconociendo texto…');
+      }}
+    );
+    setProgreso(98,'Extrayendo campos…');
+    var texto = result.data.text;
+    var extraido = extractFields(texto, campos);
+    setProgreso(100,'Completado');
+    setTimeout(function(){
+      document.getElementById('ocr-prog').style.display = 'none';
+      renderTabla(extraido, campos);
+      var secR = document.getElementById('sec-results');
+      secR.style.display = 'block';
+      secR.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }, 500);
+  } catch(err){
+    setProgreso(0,'Error: ' + (err.message || 'Falló el reconocimiento'));
+    setTimeout(function(){document.getElementById('ocr-prog').style.display='none';}, 3500);
+  } finally {
+    btnScan.disabled = false;
+    btnElim.disabled = false;
+  }
+}
+
+// ── Extracción de campos bibliográficos ───────────────────────────
+function extractFields(text, campos){
+  var out = {};
+  var lines = text.split(/\r?\n/).map(function(l){return l.trim();}).filter(Boolean);
+
+  // ISBN / ISSN
+  if (campos.isbn){
+    var m = text.match(/97[89][\s\-]?\d[\d\s\-]{9,}/);
+    if (m) out.isbn = m[0].replace(/\s/g,'').replace(/[^\d\-]/g,'');
+    else {
+      m = text.match(/ISSN[\s:]+(\d{4}[-\s]?\d{3}[\dXx])/i);
+      if (m) out.isbn = 'ISSN ' + m[1];
+    }
+  }
+
+  // Año auxiliar
+  var yrm = text.match(/\b(19[3-9]\d|20[0-2]\d)\b/);
+  var yr = yrm ? yrm[1] : '';
+
+  // Edición
+  if (campos.edicion){
+    var em = text.match(/(\d+)[ªa°.]?\s*[Ee]d(?:ición|\.|\b)/);
+    if (!em) em = text.match(/(Primera|Segunda|Tercera|Cuarta|Quinta|Sexta)\s+[Ee]dic/i);
+    if (em) out.edicion = em[0].trim();
+  }
+
+  // Descripción física
+  if (campos.desc){
+    var pm = text.match(/(\d{2,4})\s*p(?:áginas?|\.|,|\b)/i);
+    if (pm){
+      out.desc = pm[1] + ' p.';
+      if (/il\.|ils\.|lám\.?/i.test(text)) out.desc += ' : il.';
+      var cm = text.match(/(\d{1,3})\s*cm/);
+      if (cm) out.desc += ' ; ' + cm[1] + ' cm';
+    }
+  }
+
+  // Pie de imprenta
+  if (campos.pie){
+    var pim = text.match(/([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:[,\s][A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*)[\s]*:\s*([A-Za-záéíóúñÁÉÍÓÚÑ][\w\s&.,]{2,40}),\s*((19|20)\d{2})/);
+    if (pim) out.pie = pim[1].trim() + ' : ' + pim[2].trim() + ', ' + pim[3];
+    else if (yr) out.pie = yr;
+  }
+
+  // Clasificación DDC
+  if (campos.ddc){
+    var ddm, ddcs = [];
+    var re = /\b(\d{3}\.\d{1,10})\b/g;
+    while ((ddm = re.exec(text)) !== null) ddcs.push(ddm[1]);
+    if (!ddcs.length){
+      var re2 = /\b([0-9]{3})\b/g;
+      while ((ddm = re2.exec(text)) !== null){
+        var n = parseInt(ddm[1]);
+        if (n >= 1 && n <= 999) ddcs.push(ddm[1]);
+      }
+    }
+    if (ddcs.length) out.ddc = ddcs[0];
+  }
+
+  // Autores: patrón Apellido, Nombre
+  var authorLines = [];
+  lines.forEach(function(line){
+    if (/^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*,\s*[A-ZÁÉÍÓÚÑ]/.test(line)){
+      var clean = line.split(/[;(]/)[0].trim();
+      if (clean.length < 80) authorLines.push(clean);
+    }
+  });
+
+  if (campos.autor    && authorLines.length >= 1) out.autor     = authorLines[0];
+  if (campos.autor_sec && authorLines.length > 1) out.autor_sec = authorLines.slice(1).join(' ; ');
+
+  // Traductor
+  if (campos.traductor){
+    var tm = text.match(/[Tt]rad(?:ucido|ucción|\.)\s*(?:del?\s+\w+\s+)?(?:por\s+)?([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s[A-Za-záéíóúñ]+)*)/);
+    if (tm) out.traductor = tm[1].trim();
+  }
+
+  // Términos de materia
+  if (campos.materias){
+    var sm = text.match(/(?:[Mm]aterias?|[Dd]escriptores?)\s*:?\s*(.{5,120})/);
+    if (sm && sm[1]) out.materias = sm[1].split('\n')[0].trim();
+  }
+
+  // Notas
+  if (campos.notas){
+    var nm = text.match(/[Nn]ota[s]?\s*:?\s*(.{10,150})/);
+    if (nm && nm[1]) out.notas = nm[1].split('\n')[0].trim();
+  }
+
+  // Título: primera línea que no sea autor, número ni metadato
+  if (campos.titulo){
+    for (var ti = 0; ti < Math.min(lines.length, 16); ti++){
+      var line = lines[ti];
+      if (line.length < 4 || line.length > 300) continue;
+      if (/^\d/.test(line)) continue;
+      if (/ISBN|ISSN|©|\(\d{4}\)|^\d{4}$/i.test(line)) continue;
+      if (/^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+,\s/.test(line)) continue;
+      if (/^(No\.|Nota|Materia|Descr|Trad|Pie|©)/i.test(line)) continue;
+      if (!/[a-záéíóúñ]{2}/i.test(line)) continue;
+      out.titulo = line;
+      break;
+    }
+  }
+
+  return out;
+}
+
+// ── Renderizar tabla ──────────────────────────────────────────────
+function renderTabla(extraido, campos){
+  var activos = CAMPOS.filter(function(c){return campos[c.id];});
+  var thead = document.getElementById('res-thead');
+  var tbody = document.getElementById('res-tbody');
+
+  var htr = document.createElement('tr');
+  activos.forEach(function(c){
+    var th = document.createElement('th');
+    th.textContent = c.label;
+    htr.appendChild(th);
+  });
+  thead.innerHTML = '';
+  thead.appendChild(htr);
+
+  var tr = document.createElement('tr');
+  var hayVacios = false;
+  activos.forEach(function(c){
+    var td = document.createElement('td');
+    td.contentEditable = 'true';
+    td.title = 'Clic para editar';
+    var val = extraido[c.id] || '';
+    td.textContent = val;
+    if (!val) hayVacios = true;
+    tr.appendChild(td);
+  });
+  tbody.innerHTML = '';
+  tbody.appendChild(tr);
+  document.getElementById('notice-partial').style.display = hayVacios ? 'block' : 'none';
+}
+
+// ── Exportar a Excel ──────────────────────────────────────────────
+function exportarExcel(){
+  var activos = CAMPOS.filter(function(c){
+    var el = document.getElementById('chk-'+c.id);
+    return el && el.checked;
+  });
+  var headers = activos.map(function(c){return c.label;});
+  var filas = Array.from(document.getElementById('res-tbody').querySelectorAll('tr')).map(function(tr){
+    return Array.from(tr.querySelectorAll('td')).map(function(td){return td.textContent;});
+  });
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet([headers].concat(filas));
+  ws['!cols'] = headers.map(function(){return {wch:28};});
+  XLSX.utils.book_append_sheet(wb, ws, 'Extracción OCR');
+  XLSX.writeFile(wb, 'extraccion_ocr_gnos.xlsx');
+}
+
+// ── Limpiar todo ──────────────────────────────────────────────────
+function limpiarTodo(){
+  eliminarImagen();
+  document.getElementById('res-thead').innerHTML = '';
+  document.getElementById('res-tbody').innerHTML = '';
+  document.getElementById('notice-partial').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
 </script>
 </body>
 </html>

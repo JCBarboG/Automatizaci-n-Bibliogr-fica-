@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BIBNORM — Plataforma de Normalización Bibliográfica</title>
+  <title>Gnos — Plataforma de Normalización Bibliográfica</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -53,6 +53,15 @@
     .badge-g{background:var(--bg-success);color:var(--text-success);border:0.5px solid var(--border-success);}
     .sec{padding:1.25rem 1.5rem;background:var(--surface-2);}
     .tbl-wrap{overflow-x:auto;border-radius:var(--radius);border:0.5px solid var(--border);}
+    @media(max-width:640px){
+      body{padding:.5rem}
+      .sec{padding:.875rem 1rem}
+      button{min-height:40px}
+      .bb{min-height:44px}
+    }
+    @media(max-width:400px){
+      .sec{padding:.75rem .75rem}
+    }
   </style>
 </head>
 <body>
@@ -64,7 +73,7 @@
       <div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
           <i class="ti ti-books" style="font-size:20px;color:#85B7EB" aria-hidden="true"></i>
-          <span style="font-size:21px;font-weight:500;color:#E6F1FB;letter-spacing:.4px">BIBNORM</span>
+          <span style="font-size:21px;font-weight:500;color:#E6F1FB;letter-spacing:.4px">Gnos</span>
         </div>
         <p style="font-size:12.5px;color:#85B7EB;margin:0;line-height:1.5">
           Normalización y estandarización de artículos de revistas académicas · Estándares MARC21

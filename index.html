@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BIBNORM — Sistema de Normalización Bibliográfica</title>
+  <title>Gnos — Sistema de Normalización Bibliográfica</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -112,6 +112,20 @@
     }
     .btn-ocr:hover { background: #185FA5; }
 
+    /* ── Responsive ── */
+    @media(max-width:640px){
+      header{padding:0 1rem}
+      .logo-sub{display:none}
+      main{padding:2rem 1rem 4rem}
+      .section-intro h2{font-size:24px}
+      .section-intro p{font-size:14px}
+      .ocr-banner{flex-direction:column;align-items:flex-start;padding:1.25rem}
+      .ocr-left{gap:.75rem}
+      .btn-ocr{width:100%;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+      .card{padding:22px 14px 18px}
+    }
+    @media(max-width:380px){.logo-name{font-size:16px}}
+
     /* ── Hamburger overlay + panel ── */
     #mbg {
       display: none; position: fixed; inset: 0;
@@ -162,7 +176,7 @@
       <i class="ti ti-books" style="font-size:22px;color:#85B7EB" aria-hidden="true"></i>
     </div>
     <div>
-      <div class="logo-name">BIBNORM</div>
+      <div class="logo-name">Gnos</div>
       <div class="logo-sub">Sistema institucional de normalización bibliográfica</div>
     </div>
   </a>

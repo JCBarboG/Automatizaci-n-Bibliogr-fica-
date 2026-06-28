@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BIBNORM — Referencias bibliográficas APA 7</title>
+  <title>Gnos — Referencias bibliográficas APA 7</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -81,6 +81,15 @@
     .dots{display:flex;gap:5px;justify-content:center;margin-top:10px}
     .dot{width:7px;height:7px;border-radius:50%;background:rgba(12,68,124,.18);cursor:pointer;transition:background .2s}
     .dot.on{background:#0C447C}
+    @media(max-width:520px){
+      header{padding:0 1rem}
+      .logo-sub{display:none}
+      main{padding:1.75rem 1rem 4rem}
+      .btn-gen{width:100%;justify-content:center;min-height:44px}
+      .btn-sec,.btn-copy{min-height:44px}
+      .btn-row{flex-direction:column}
+      .btn-row .btn-sec,.btn-row .btn-copy{justify-content:center}
+    }
   </style>
 </head>
 <body>
@@ -89,7 +98,7 @@
   <a class="logo" href="../index.html">
     <div class="logo-icon"><i class="ti ti-books" style="font-size:22px;color:#85B7EB" aria-hidden="true"></i></div>
     <div>
-      <div class="logo-name">BIBNORM</div>
+      <div class="logo-name">Gnos</div>
       <div class="logo-sub">Generador automático de referencias bibliográficas</div>
     </div>
   </a>
