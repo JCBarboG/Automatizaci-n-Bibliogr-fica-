@@ -4,10 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gnos — Extracción con OCR</title>
+  <meta name="description" content="Gnos · Extracción de datos bibliográficos mediante OCR con mapeo automático a campos MARC21">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:linear-gradient(160deg,#EAF0FA 0%,#EEF3FD 55%,#E6EEF8 100%);min-height:100vh;color:#1a1a18}
+
+    /* ── Header ─────────────────────────────────────────────── */
     header{background:#0C447C;padding:0 1.75rem;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25)}
     .logo{display:flex;align-items:center;gap:12px;text-decoration:none}
     .logo-icon{width:40px;height:40px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:9px;display:flex;align-items:center;justify-content:center}
@@ -16,6 +19,8 @@
     .logo-sub-short{display:none;font-size:11px;color:#85B7EB;margin-top:2px}
     .btn-ham{background:none;border:none;cursor:pointer;color:#E6F1FB;font-size:24px;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .15s}
     .btn-ham:hover{background:rgba(255,255,255,.12)}
+
+    /* ── Nav lateral ─────────────────────────────────────────── */
     #mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900}
     #mnav{position:fixed;top:0;right:-320px;width:300px;max-width:90vw;height:100%;background:#0C447C;z-index:901;transition:right .28s ease;overflow-y:auto;box-shadow:-4px 0 30px rgba(0,0,0,.3)}
     #mnav.open{right:0}
@@ -29,19 +34,26 @@
     .mn-ico{font-size:22px;margin-top:2px;flex-shrink:0}
     .mn-label{font-size:14px;font-weight:600;color:#E6F1FB;margin-bottom:3px}
     .mn-sub{font-size:12px;color:#85B7EB;line-height:1.4}
-    main{max-width:800px;margin:0 auto;padding:2rem 1.5rem 5rem}
+
+    /* ── Layout ──────────────────────────────────────────────── */
+    main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem}
     .card{background:#fff;border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;box-shadow:0 2px 14px rgba(12,68,124,.07),0 1px 3px rgba(0,0,0,.04);border:0.5px solid rgba(12,68,124,.06)}
     .card-hdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:0.5px solid #ebebeb}
     .card-hdr-icon{width:38px;height:38px;border-radius:9px;background:rgba(24,95,165,.1);display:flex;align-items:center;justify-content:center;font-size:20px;color:#185FA5;flex-shrink:0}
     .card-hdr-text h2{font-size:14.5px;font-weight:700;color:#0C447C;margin-bottom:3px}
     .card-hdr-text p{font-size:12px;color:#5c5c59;line-height:1.4}
+
+    /* ── Checkboxes ──────────────────────────────────────────── */
     .chk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-    .chk-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;background:#f9f9f8;border:0.5px solid rgba(0,0,0,.09);cursor:pointer;min-height:44px;transition:background .12s,border-color .12s}
+    .chk-item{border-radius:8px;background:#f9f9f8;border:0.5px solid rgba(0,0,0,.09);transition:background .12s,border-color .12s;overflow:hidden}
+    .chk-item:has(input:checked){border-color:rgba(24,95,165,.3)}
     .chk-item:hover{background:#EAF0FA;border-color:rgba(24,95,165,.22)}
     .chk-item input[type=checkbox]{width:15px;height:15px;cursor:pointer;flex-shrink:0;accent-color:#0C447C}
-    .chk-label{font-size:12.5px;color:#1a1a18;cursor:pointer;line-height:1.3}
+    .chk-label{font-size:12.5px;color:#1a1a18;line-height:1.3;cursor:pointer}
     .btn-toggle{background:none;border:none;cursor:pointer;font-size:12px;color:#185FA5;padding:6px 0;margin-top:.5rem;text-decoration:underline;text-underline-offset:2px;font-family:inherit}
     .btn-toggle:hover{color:#0C447C}
+
+    /* ── Drop zone ───────────────────────────────────────────── */
     .drop-zone{border:2px dashed rgba(24,95,165,.3);border-radius:12px;padding:2.25rem 1.5rem;text-align:center;background:#f9fbfe;cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:.875rem}
     .drop-zone:hover,.drop-zone.dragover{background:#EAF0FA;border-color:#185FA5}
     .drop-zone-icon{font-size:38px;color:#185FA5;margin-bottom:.625rem}
@@ -52,19 +64,38 @@
     .btn-upload:hover{background:#f4f4f2}
     .btn-camera{background:#0C447C;color:#fff;border:none}
     .btn-camera:hover{background:#185FA5;color:#fff}
+
+    /* ── Preview ─────────────────────────────────────────────── */
     .preview-wrap{border-radius:10px;overflow:hidden;background:#f4f4f2;max-height:380px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
     .preview-wrap img{max-width:100%;max-height:380px;object-fit:contain;display:block}
+
+    /* ── Progreso ────────────────────────────────────────────── */
     .prog-wrap{margin:.75rem 0 1rem}
     .prog-lbl{display:flex;justify-content:space-between;font-size:12px;color:#5c5c59;margin-bottom:5px}
-    .prog-bar{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden}
-    .prog-fill{height:100%;background:#185FA5;width:0%;transition:width .25s linear;border-radius:3px}
+    .prog-bar{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden}
+    .prog-fill{height:100%;background:#185FA5;width:0%;transition:width .3s ease;border-radius:4px}
+    .prog-stages{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .prog-stage{font-size:11px;padding:3px 10px;border-radius:10px;background:#f0f0ee;color:#9b9b97;border:0.5px solid rgba(0,0,0,.08);transition:background .2s,color .2s}
+    .prog-stage.active{background:#185FA5;color:#fff;border-color:transparent}
+    .prog-stage.done{background:#EAF3DE;color:#276749;border-color:rgba(39,103,73,.25)}
+
+    /* ── Tabla resultados MARC21 ─────────────────────────────── */
     .tbl-wrap{overflow-x:auto;border-radius:8px;border:0.5px solid rgba(0,0,0,.1)}
-    .res-tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:280px}
-    .res-tbl th{background:#f4f4f2;color:#5c5c59;font-weight:600;font-size:11.5px;padding:8px 12px;border:0.5px solid rgba(0,0,0,.08);text-align:left;white-space:nowrap}
-    .res-tbl td{padding:9px 12px;border:0.5px solid rgba(0,0,0,.08);color:#1a1a18;vertical-align:top;min-width:100px}
-    .res-tbl td[contenteditable=true]{cursor:text}
-    .res-tbl td[contenteditable=true]:focus{background:#EAF0FA;outline:none}
-    .res-tbl td[contenteditable=true]:empty::before{content:'—';color:#b0b0a8}
+    .res-tbl{width:100%;border-collapse:collapse;font-size:13px}
+    .res-tbl th{background:#0C447C;color:#fff;font-weight:600;font-size:11.5px;padding:9px 12px;border:0.5px solid rgba(255,255,255,.15);text-align:left;white-space:nowrap}
+    .res-tbl tr:nth-child(even) td{background:#E6F1FB}
+    .res-tbl td{padding:9px 12px;border:0.5px solid rgba(0,0,0,.08);color:#1a1a18;vertical-align:top}
+    .res-tbl td.marc-tag{font-family:'Courier New',monospace;font-size:12px;color:#185FA5;white-space:nowrap;font-weight:700;min-width:100px;background:#f4f8fe!important}
+    .res-tbl td.marc-lbl{font-size:12px;color:#5c5c59;white-space:nowrap;min-width:140px}
+    .res-tbl td.marc-val{cursor:text;min-width:180px;word-break:break-word;white-space:pre-wrap}
+    .res-tbl td.marc-val:focus{background:#EAF0FA!important;outline:none}
+    .res-tbl td.marc-val:empty::before{content:'—';color:#b0b0a8}
+    .res-tbl td.marc-val.extracted{background:#fffbcc!important}
+    .res-tbl td.marc-status{text-align:center;white-space:nowrap;min-width:88px}
+    .badge-ok{background:#276749;color:#fff;font-size:11px;padding:2px 9px;border-radius:5px;display:inline-block;font-weight:600}
+    .badge-rev{background:#8a5a08;color:#fff;font-size:11px;padding:2px 9px;border-radius:5px;display:inline-block;font-weight:600}
+
+    /* ── Botones ─────────────────────────────────────────────── */
     .btn-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem}
     .btn-primary{background:#0C447C;color:#fff;border:none;padding:11px 22px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;gap:7px;font-family:inherit;transition:background .15s}
     .btn-primary:hover{background:#185FA5}
@@ -75,6 +106,8 @@
     .btn-dng{color:#9b1c1c;border-color:rgba(155,28,28,.25);background:#fef9f9}
     .btn-dng:hover{background:#FEE9E9}
     .notice{display:none;margin-top:.875rem;padding:10px 13px;background:#FFF3DC;border:0.5px solid rgba(190,120,20,.3);border-radius:8px;font-size:12.5px;color:#8a5a08;line-height:1.5}
+
+    /* ── Modal cámara ────────────────────────────────────────── */
     .modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;align-items:center;justify-content:center;padding:1rem}
     .modal-ov.open{display:flex}
     .modal-box{background:#fff;border-radius:16px;padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
@@ -85,6 +118,8 @@
     #cam-video{width:100%;border-radius:8px;max-height:280px;object-fit:cover;background:#111;display:block}
     .cam-btns{display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap}
     .cam-err{display:none;margin-top:.75rem;padding:10px 13px;background:#FEE9E9;border:0.5px solid rgba(155,28,28,.25);border-radius:8px;font-size:13px;color:#9b1c1c}
+
+    /* ── Responsive ──────────────────────────────────────────── */
     @media(max-width:640px){
       header{padding:0 1rem}
       .logo-sub{display:none}
@@ -133,6 +168,9 @@
     <li><a href="contacto.html"><span class="mn-ico">✉️</span><div><div class="mn-label">Contacto y sugerencias</div><div class="mn-sub">Envianos tus comentarios o reporta un error</div></div></a></li>
   </ul>
 </nav>
+
+<!-- Canvas oculto para preprocesamiento -->
+<canvas id="gnos-preproc-canvas" style="display:none"></canvas>
 
 <main>
 
@@ -193,6 +231,12 @@
         <span id="prog-pct">0%</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="prog-stages" id="prog-stages">
+        <span class="prog-stage" id="ps-0">Cargando motor</span>
+        <span class="prog-stage" id="ps-1">Procesando imagen</span>
+        <span class="prog-stage" id="ps-2">Extrayendo texto</span>
+        <span class="prog-stage" id="ps-3">Mapeando MARC21</span>
+      </div>
     </div>
     <div class="btn-row">
       <button class="btn-secondary btn-dng" id="btn-elim" onclick="eliminarImagen()">
@@ -211,11 +255,11 @@
       <div class="card-hdr-icon"><i class="ti ti-table" aria-hidden="true"></i></div>
       <div class="card-hdr-text">
         <h2>Resultado extraído</h2>
-        <p>Editá los campos directamente en la tabla. Los cambios se exportan tal como aparecen.</p>
+        <p>Editá los campos directamente en la tabla antes de exportar.</p>
       </div>
     </div>
     <div class="tbl-wrap">
-      <table class="res-tbl">
+      <table class="res-tbl" id="res-tbl">
         <thead id="res-thead"></thead>
         <tbody id="res-tbody"></tbody>
       </table>
@@ -225,18 +269,18 @@
       Algunos campos no fueron detectados automáticamente. Revisá y completá los valores antes de exportar.
     </div>
     <div class="btn-row">
-      <button class="btn-primary" onclick="exportarExcel()">
-        <i class="ti ti-file-spreadsheet" aria-hidden="true"></i> Generar Excel
+      <button class="btn-primary" onclick="gnosExportarExcel()">
+        <i class="ti ti-file-spreadsheet" aria-hidden="true"></i> Exportar a Excel
       </button>
       <button class="btn-secondary" onclick="limpiarTodo()">
-        <i class="ti ti-refresh" aria-hidden="true"></i> Limpiar
+        <i class="ti ti-refresh" aria-hidden="true"></i> Nueva extracción
       </button>
     </div>
   </div>
 
 </main>
 
-<!-- Cámara modal -->
+<!-- Modal cámara -->
 <div id="cam-modal" class="modal-ov">
   <div class="modal-box">
     <div class="modal-hdr">
@@ -259,27 +303,28 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script>
-// ── Navegación ────────────────────────────────────────────────────
+// ── Navegación ─────────────────────────────────────────────────────
 function openMbg(){document.getElementById('mbg').style.display='block';document.getElementById('mnav').classList.add('open');document.body.style.overflow='hidden';}
 function closeMbg(){document.getElementById('mbg').style.display='none';document.getElementById('mnav').classList.remove('open');document.body.style.overflow='';}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeMbg();cerrarCamara();}});
 
-// ── Campos de extracción ──────────────────────────────────────────
+// ── Campos de extracción ───────────────────────────────────────────
+// Mejora 3: labels wrapping the input — toda el área es clicable
 var CAMPOS = [
-  {id:'autor',      label:'Autor principal'},
-  {id:'titulo',     label:'Título'},
-  {id:'edicion',    label:'Edición'},
-  {id:'pie',        label:'Pie de imprenta'},
-  {id:'isbn',       label:'ISBN / ISSN'},
-  {id:'ddc',        label:'Clasificación DDC'},
-  {id:'desc',       label:'Descripción física'},
-  {id:'autor_sec',  label:'Autor(es) secundario(s)'},
-  {id:'traductor',  label:'Traductor(es)'},
-  {id:'materias',   label:'Términos de materia'},
-  {id:'notas',      label:'Notas'}
+  {id:'autor',     label:'Autor principal'},
+  {id:'titulo',    label:'Título'},
+  {id:'edicion',   label:'Edición'},
+  {id:'pie',       label:'Pie de imprenta'},
+  {id:'isbn',      label:'ISBN / ISSN'},
+  {id:'ddc',       label:'Clasificación DDC'},
+  {id:'desc',      label:'Descripción física'},
+  {id:'autor_sec', label:'Autor(es) secundario(s)'},
+  {id:'traductor', label:'Traductor(es)'},
+  {id:'materias',  label:'Términos de materia'},
+  {id:'notas',     label:'Notas'}
 ];
 
 (function buildChkGrid(){
@@ -287,8 +332,11 @@ var CAMPOS = [
   CAMPOS.forEach(function(c){
     var div = document.createElement('div');
     div.className = 'chk-item';
-    div.innerHTML = '<input type="checkbox" id="chk-'+c.id+'" checked aria-label="'+c.label+'">'
-                  + '<label class="chk-label" for="chk-'+c.id+'">'+c.label+'</label>';
+    div.innerHTML =
+      '<label for="chk-' + c.id + '" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:9px 11px;width:100%;min-height:44px;">' +
+        '<input type="checkbox" id="chk-' + c.id + '" name="' + c.id + '" checked>' +
+        '<span class="chk-label">' + c.label + '</span>' +
+      '</label>';
     grid.appendChild(div);
   });
 })();
@@ -299,14 +347,13 @@ function toggleAll(){
   CAMPOS.forEach(function(c){document.getElementById('chk-'+c.id).checked = allChecked;});
   document.getElementById('btn-toggle').textContent = allChecked ? 'Deseleccionar todos' : 'Seleccionar todos';
 }
-
 function getSelectedCampos(){
   var sel = {};
   CAMPOS.forEach(function(c){sel[c.id] = document.getElementById('chk-'+c.id).checked;});
   return sel;
 }
 
-// ── Estado de imagen ──────────────────────────────────────────────
+// ── Estado de imagen ───────────────────────────────────────────────
 var currentSrc = null;
 
 function mostrarImagen(src){
@@ -314,10 +361,9 @@ function mostrarImagen(src){
   document.getElementById('preview-img').src = src;
   var sec = document.getElementById('sec-preview');
   sec.style.display = 'block';
-  sec.scrollIntoView({behavior:'smooth', block:'nearest'});
+  sec.scrollIntoView({behavior:'smooth',block:'nearest'});
   document.getElementById('sec-results').style.display = 'none';
 }
-
 function eliminarImagen(){
   currentSrc = null;
   document.getElementById('file-input').value = '';
@@ -325,10 +371,10 @@ function eliminarImagen(){
   document.getElementById('sec-preview').style.display = 'none';
   document.getElementById('sec-results').style.display = 'none';
   document.getElementById('ocr-prog').style.display = 'none';
-  setProgreso(0,'');
+  gnosSetProgreso(0,'');
 }
 
-// ── Drag-and-drop ─────────────────────────────────────────────────
+// ── Drag-and-drop ──────────────────────────────────────────────────
 (function(){
   var dz = document.getElementById('drop-zone');
   if (!dz) return;
@@ -341,265 +387,534 @@ function eliminarImagen(){
   });
   dz.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){document.getElementById('file-input').click();}});
 })();
-
 document.getElementById('file-input').addEventListener('change',function(e){
   var f = e.target.files[0];
   if (f) cargarArchivo(f);
 });
-
 function cargarArchivo(file){
-  if (file.size > 10 * 1024 * 1024){alert('La imagen supera los 10 MB permitidos.'); return;}
+  if(file.size > 10*1024*1024){alert('La imagen supera los 10 MB permitidos.');return;}
   var reader = new FileReader();
   reader.onload = function(e){mostrarImagen(e.target.result);};
   reader.readAsDataURL(file);
 }
 
-// ── Cámara ────────────────────────────────────────────────────────
+// ── Cámara ─────────────────────────────────────────────────────────
 var camStream = null;
-
 function abrirCamara(){
-  var modal = document.getElementById('cam-modal');
   var errEl = document.getElementById('cam-err');
-  errEl.style.display = 'none';
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  errEl.style.display='none';
+  document.getElementById('cam-modal').classList.add('open');
+  document.body.style.overflow='hidden';
   navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}})
-    .then(function(stream){
-      camStream = stream;
-      document.getElementById('cam-video').srcObject = stream;
-    })
-    .catch(function(err){
-      errEl.textContent = 'No se pudo acceder a la cámara: ' + (err.message || err);
-      errEl.style.display = 'block';
-    });
+    .then(function(s){camStream=s;document.getElementById('cam-video').srcObject=s;})
+    .catch(function(err){errEl.textContent='No se pudo acceder a la cámara: '+(err.message||err);errEl.style.display='block';});
 }
-
 function cerrarCamara(){
-  if (camStream){camStream.getTracks().forEach(function(t){t.stop();});camStream=null;}
-  var v = document.getElementById('cam-video');
-  v.srcObject = null;
+  if(camStream){camStream.getTracks().forEach(function(t){t.stop();});camStream=null;}
+  document.getElementById('cam-video').srcObject=null;
   document.getElementById('cam-modal').classList.remove('open');
-  document.body.style.overflow = '';
+  document.body.style.overflow='';
 }
-
 function capturarFoto(){
-  var v = document.getElementById('cam-video');
-  var c = document.getElementById('cam-canvas');
-  c.width = v.videoWidth || 640;
-  c.height = v.videoHeight || 480;
-  c.getContext('2d').drawImage(v, 0, 0);
-  var dataUrl = c.toDataURL('image/jpeg', 0.92);
+  var v=document.getElementById('cam-video');
+  var c=document.getElementById('cam-canvas');
+  c.width=v.videoWidth||640;c.height=v.videoHeight||480;
+  c.getContext('2d').drawImage(v,0,0);
   cerrarCamara();
-  mostrarImagen(dataUrl);
+  mostrarImagen(c.toDataURL('image/jpeg',0.92));
 }
 
-// ── Progreso OCR ──────────────────────────────────────────────────
-function setProgreso(pct, label){
+// ── Progreso ───────────────────────────────────────────────────────
+function gnosSetProgreso(pct, label, stageIdx){
   document.getElementById('prog-fill').style.width = pct + '%';
-  document.getElementById('prog-pct').textContent = pct + '%';
-  if (label) document.getElementById('prog-lbl-txt').textContent = label;
+  document.getElementById('prog-pct').textContent  = pct + '%';
+  if (label !== undefined && label !== '') document.getElementById('prog-lbl-txt').textContent = label;
+  if (stageIdx !== undefined){
+    for (var i = 0; i < 4; i++){
+      var el = document.getElementById('ps-'+i);
+      if (!el) continue;
+      el.className = 'prog-stage' + (i < stageIdx ? ' done' : i === stageIdx ? ' active' : '');
+    }
+  }
 }
 
-// ── Escanear con Tesseract.js ─────────────────────────────────────
+// ── Mejora 1: Preprocesamiento de imagen ───────────────────────────
+// Convierte a escala de grises, estira contraste y binariza.
+// Mejora significativamente el reconocimiento en tipografías variadas.
+function gnosPreprocesarImagen(src){
+  return new Promise(function(resolve){
+    var img = new Image();
+    img.onload = function(){
+      var W = img.naturalWidth  || 800;
+      var H = img.naturalHeight || 600;
+      var canvas = document.getElementById('gnos-preproc-canvas');
+      canvas.width  = W;
+      canvas.height = H;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, W, H);
+      var imgData = ctx.getImageData(0, 0, W, H);
+      var d = imgData.data;
+      for (var i = 0; i < d.length; i += 4){
+        // Luminancia perceptual
+        var gray = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+        // Estiramiento de contraste: rango [30,220] → [0,255]
+        var stretched = Math.min(255, Math.max(0, (gray - 30) * (255 / 190)));
+        // Umbralización
+        var bin = stretched > 145 ? 255 : 0;
+        d[i] = d[i+1] = d[i+2] = bin;
+        d[i+3] = 255;
+      }
+      ctx.putImageData(imgData, 0, 0);
+      canvas.toBlob(function(blob){ resolve(blob || src); }, 'image/png');
+    };
+    img.onerror = function(){ resolve(src); };
+    img.src = src;
+  });
+}
+
+// ── Mejora 1: Motor OCR con Tesseract.js v5 ────────────────────────
+async function gnosReconocerTexto(imagenSrc){
+  gnosSetProgreso(5, 'Cargando motor OCR…', 0);
+  var blob = await gnosPreprocesarImagen(imagenSrc);
+
+  gnosSetProgreso(15, 'Inicializando motor…', 0);
+  var worker = await Tesseract.createWorker('spa+eng', 1, {
+    logger: function(m){
+      if (!m || !m.status) return;
+      var s = m.status;
+      if      (s === 'loading language traineddata') gnosSetProgreso(22, 'Cargando idioma…', 0);
+      else if (s === 'initializing tesseract')       gnosSetProgreso(32, 'Preparando reconocimiento…', 1);
+      else if (s === 'recognizing text')             gnosSetProgreso(38 + Math.round((m.progress||0)*45), 'Extrayendo texto…', 2);
+    }
+  });
+
+  // Primera pasada: PSM 6 — bloque de texto uniforme
+  await worker.setParameters({
+    tessedit_pageseg_mode:     '6',
+    preserve_interword_spaces: '1',
+  });
+  var res1   = await worker.recognize(blob);
+  var texto  = (res1.data && res1.data.text) ? res1.data.text : '';
+
+  // Reintento con PSM 3 si el resultado es insuficiente
+  if (texto.replace(/\s/g,'').length < 20){
+    gnosSetProgreso(84, 'Reintentando (modo automático)…', 2);
+    await worker.setParameters({ tessedit_pageseg_mode: '3' });
+    var res2 = await worker.recognize(blob);
+    if (res2.data && res2.data.text) texto = res2.data.text;
+  }
+
+  gnosSetProgreso(93, 'Mapeando campos MARC21…', 3);
+  await worker.terminate();
+  return texto;
+}
+
+// ── Mejora 2: Limpieza del texto OCR ──────────────────────────────
+function gnosLimpiarTexto(raw){
+  return raw
+    .replace(/\r\n/g, '\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/["""]/g, '"')
+    .replace(/['']/g, "'")
+    .replace(/\n(.{1,2})\n/g, '\n')   // descarta líneas de 1-2 chars
+    .trim();
+}
+
+// ── Mejora 2: Extracción de autores ───────────────────────────────
+function gnosExtraerAutores(lineas, texto){
+  var res = { principal: null, secundarios: [] };
+  var reApellido = /^[A-ZÁÉÍÓÚÑ][A-Za-záéíóúñÑ]+(?:\s[A-ZÁÉÍÓÚÑ][A-Za-záéíóúñÑ]+)*,\s*[A-ZÁÉÍÓÚÑ]/;
+
+  // Búsqueda por patrón "por X"
+  var mPor = texto.match(/(?:^|\n)[Pp]or[:\s]+([A-ZÁÉÍÓÚÑ][a-záéíóúñ][\w\sáéíóúñÁÉÍÓÚÑ.]+?)(?:\n|$)/m);
+  if (mPor){
+    var a0 = mPor[1].trim().split(/\s*[;,y]\s+/)[0];
+    res.principal = { a: a0 + (a0.endsWith(',') ? '' : ','), d: '' };
+  }
+
+  // Patrón canónico: Apellido, Nombre
+  lineas.forEach(function(l){
+    if (!reApellido.test(l)) return;
+    var clean = l.split(/[;(]/)[0].trim();
+    if (clean.length > 90) return;
+    var entry = { a: clean + (clean.endsWith(',') ? '' : ','), d: '' };
+    if (!res.principal) res.principal = entry;
+    else res.secundarios.push({ a: entry.a, e: 'coautor.' });
+  });
+
+  // Roles específicos
+  var roles = [
+    { re:/[Tt]rad(?:ucido|ucción)\s+(?:por|de)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ][\w\sáéíóúñÁÉÍÓÚÑ.]+?)(?:\n|[.;])/m, e:'traductor.' },
+    { re:/[Ii]lustr(?:ado|aciones?)\s+(?:por|de)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ][\w\sáéíóúñÁÉÍÓÚÑ.]+?)(?:\n|[.;])/m,  e:'ilustrador.' },
+    { re:/[Cc]ompil(?:ado|ación)\s+(?:por|de)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ][\w\sáéíóúñÁÉÍÓÚÑ.]+?)(?:\n|[.;])/m,    e:'compilador.' },
+    { re:/[Pp]r[oó]logo\s+(?:de|por)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ][\w\sáéíóúñÁÉÍÓÚÑ.]+?)(?:\n|[.;])/m,             e:'prologuista.' },
+    { re:/[Cc]oordin(?:ado|ación)\s+(?:por|de)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ][\w\sáéíóúñÁÉÍÓÚÑ.]+?)(?:\n|[.;])/m,    e:'coordinador.' },
+    { re:/[Ee]dit(?:ado|ado\s+por|ión\s+de)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ][\w\sáéíóúñÁÉÍÓÚÑ.]+?)(?:\n|[.;])/m,       e:'editor.' },
+  ];
+  roles.forEach(function(r){
+    var m = texto.match(r.re);
+    if (m) res.secundarios.push({ a: m[1].trim() + ',', e: r.e });
+  });
+
+  return res;
+}
+
+// ── Mejora 2: Extracción de título completo ────────────────────────
+function gnosExtraerTitulo(lineas, autor100){
+  var autorBase = autor100 ? (autor100.a||'').replace(/,$/,'').toLowerCase().split(',')[0] : '';
+  var resultado = { a: '', b: '' };
+  for (var i = 0; i < Math.min(lineas.length, 22); i++){
+    var l = lineas[i];
+    if (l.length < 4) continue;
+    if (/^\d/.test(l)) continue;
+    if (/ISBN|ISSN|©|www\.|http|\(\d{4}\)|^\d{4}$/i.test(l)) continue;
+    if (/^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*,\s/.test(l)) continue;
+    if (/^(No\.|Nota|Materia|Descr|Trad|Pie|©|Impreso|Printed|Depósito|Reserv)/i.test(l)) continue;
+    if (autorBase && l.toLowerCase().indexOf(autorBase) >= 0 && l.length < 60) continue;
+    if (!/[a-záéíóúñ]{2}/i.test(l)) continue;
+    // Acumular líneas contiguas que parezcan continuar el título
+    var titLines = [l];
+    for (var j = i+1; j < Math.min(i+4, lineas.length); j++){
+      var next = lineas[j];
+      if (next.length < 3 || /^\d{4}$/.test(next) || /ISBN|ISSN|©/i.test(next)) break;
+      if (/^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*,\s/.test(next)) break;
+      if (l.endsWith(':') || l.endsWith('—') || l.endsWith('-')){
+        resultado.b = next.trim() + ' /';
+        break;
+      }
+      if (next.length < 60 && /[a-z]/i.test(next)) { titLines.push(next); break; }
+      break;
+    }
+    resultado.a = titLines.join(' ').replace(/:?\s*$/, '') + ' :';
+    break;
+  }
+  return resultado;
+}
+
+// ── Mejora 2: Edición ──────────────────────────────────────────────
+function gnosExtraerEdicion(texto){
+  var m = texto.match(/(\d+)[ªa°.]?\s*[Ee]d(?:ición|ition|\.|\b)/);
+  if (!m) m = texto.match(/(Primera|Segunda|Tercera|Cuarta|Quinta|Sexta)\s+[Ee]dic/i);
+  if (!m) m = texto.match(/([Ee]d(?:ición|ition)\.?\s*\w+)/);
+  return m ? { a: m[0].trim() } : null;
+}
+
+// ── Mejora 2: Pie de imprenta ──────────────────────────────────────
+function gnosExtraerPie(texto){
+  var pie = { a: '[S.l.] :', b: '[s.n.],', c: '', _detectado: false };
+  var yr = texto.match(/\b(1[89]\d{2}|20[0-2]\d)\b/);
+  if (yr){ pie.c = yr[1] + '.'; pie._detectado = true; }
+  var m = texto.match(/([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*)\s*:\s*([A-Za-záéíóúñÁÉÍÓÚÑ][\w\s&.,]{2,55}),\s*(1[89]\d{2}|20[0-2]\d)/);
+  if (m){
+    pie.a = m[1].trim() + ' :';
+    pie.b = m[2].trim() + ',';
+    pie.c = m[3] + '.';
+    pie._detectado = true;
+  }
+  return pie;
+}
+
+// ── Mejora 2: ISBN / ISSN ──────────────────────────────────────────
+function gnosExtraerISBN(texto){
+  var isbns = [], seen = {};
+  // ISBN-13 (978/979)
+  var re13 = /97[89][\s\-]?(?:\d[\s\-]?){9}\d/g, m;
+  while ((m = re13.exec(texto)) !== null){
+    var raw = m[0].replace(/[\s\-]/g,'');
+    if (raw.length === 13 && !seen[raw]){ seen[raw]=1; isbns.push({a: raw}); }
+  }
+  // ISBN-10
+  var re10 = /\b(\d[\s\-]?){9}[\dXx]\b/g;
+  while ((m = re10.exec(texto)) !== null){
+    var raw2 = m[0].replace(/[\s\-]/g,'').toUpperCase();
+    if (raw2.length === 10 && !seen[raw2]){
+      seen[raw2]=1;
+      isbns.push(isbns.length ? {z: raw2} : {a: raw2});
+    }
+  }
+  // ISSN fallback
+  if (!isbns.length){
+    var mISSN = texto.match(/ISSN[\s:]+(\d{4}[-\s]?\d{3}[\dXx])/i);
+    if (mISSN) isbns.push({ a: 'ISSN ' + mISSN[1] });
+  }
+  return isbns.length ? isbns : null;
+}
+
+// ── Mejora 2: DDC y LC ─────────────────────────────────────────────
+function gnosExtraerDDC(texto){
+  var m = texto.match(/\b(\d{3}\.\d{1,10})\b/);
+  if (!m) m = texto.match(/\b([1-9]\d{2})\b/);
+  return m ? { a: m[1] } : null;
+}
+function gnosExtraerLC(texto){
+  var m = texto.match(/\b([A-Z]{1,3}\d{3,4}(?:\.\w+)?)\b/);
+  return m ? { a: m[1] } : null;
+}
+
+// ── Mejora 2: Descripción física ───────────────────────────────────
+function gnosExtraerDescFisica(texto){
+  var d = {};
+  var pm = texto.match(/(\d{2,4})\s*p(?:áginas?|ages?|\.|\b)/i);
+  if (pm) d.a = pm[1] + ' páginas :';
+  var im = /il\.|ilustr|láminas?|figuras?|fotos?/i.test(texto);
+  if (im) d.b = (d.a ? '' : '') + 'ilustraciones ;';
+  var cm = texto.match(/(\d{1,3})\s*cm/);
+  if (cm) d.c = cm[1] + ' cm';
+  return (d.a || d.b || d.c) ? d : null;
+}
+
+// ── Mejora 2: Materias ─────────────────────────────────────────────
+function gnosExtraerMaterias(texto){
+  var out = [];
+  var sm = texto.match(/(?:[Mm]aterias?|[Dd]escriptores?|[Ss]ubjects?)[:\s]+(.+?)(?:\n\n|ISBN|$)/s);
+  if (sm){
+    sm[1].split(/[;\n]/).forEach(function(t){
+      t = t.trim();
+      if (t.length >= 3 && t.length < 120) out.push({ a: t.replace(/\.+$/, '') + '.' });
+    });
+  }
+  return out.length ? out : null;
+}
+
+// ── Mejora 2: Notas ────────────────────────────────────────────────
+function gnosExtraerNotas(texto){
+  var m = texto.match(/[Nn]ota[s]?\s*:?\s*(.{10,200})/);
+  return m ? { a: m[1].split('\n')[0].trim() } : null;
+}
+
+// ── Mejora 2: procesarOCR() — motor principal MARC21 ─────────────
+// Stateless: recibe texto bruto + campos seleccionados → objeto MARC21
+function procesarOCR(textoReconocido, camposSeleccionados){
+  var texto  = gnosLimpiarTexto(textoReconocido);
+  var lineas = texto.split(/\r?\n/)
+    .map(function(l){ return l.trim(); })
+    .filter(function(l){ return l.length >= 3 && /\w/.test(l); });
+
+  var marc = {};
+
+  var autores = gnosExtraerAutores(lineas, texto);
+
+  if (camposSeleccionados.autor && autores.principal)
+    marc['100'] = autores.principal;
+
+  if ((camposSeleccionados.autor_sec || camposSeleccionados.traductor) && autores.secundarios.length)
+    marc['700'] = autores.secundarios;
+
+  if (camposSeleccionados.titulo){
+    var tit = gnosExtraerTitulo(lineas, marc['100'] || null);
+    if (tit.a) marc['245'] = tit;
+  }
+
+  if (camposSeleccionados.edicion){
+    var ed = gnosExtraerEdicion(texto);
+    if (ed) marc['250'] = ed;
+  }
+
+  if (camposSeleccionados.pie){
+    var pie = gnosExtraerPie(texto);
+    if (pie._detectado) marc['264'] = { a: pie.a, b: pie.b, c: pie.c };
+  }
+
+  if (camposSeleccionados.isbn){
+    var isbns = gnosExtraerISBN(texto);
+    if (isbns) marc['020'] = isbns;
+  }
+
+  if (camposSeleccionados.ddc){
+    var ddc = gnosExtraerDDC(texto);
+    if (ddc) marc['082'] = ddc;
+    var lc  = gnosExtraerLC(texto);
+    if (lc)  marc['050'] = lc;
+  }
+
+  if (camposSeleccionados.desc){
+    var desc = gnosExtraerDescFisica(texto);
+    if (desc) marc['300'] = desc;
+  }
+
+  if (camposSeleccionados.materias){
+    var mat = gnosExtraerMaterias(texto);
+    if (mat) marc['650'] = mat;
+  }
+
+  if (camposSeleccionados.notas){
+    var nota = gnosExtraerNotas(texto);
+    if (nota) marc['500'] = nota;
+  }
+
+  return marc;
+}
+
+// ── Escanear ───────────────────────────────────────────────────────
 async function escanear(){
   if (!currentSrc) return;
-  var campos = getSelectedCampos();
+  var campos  = getSelectedCampos();
   var btnScan = document.getElementById('btn-scan');
   var btnElim = document.getElementById('btn-elim');
   btnScan.disabled = true;
   btnElim.disabled = true;
   document.getElementById('ocr-prog').style.display = 'block';
   document.getElementById('sec-results').style.display = 'none';
-  setProgreso(0,'Inicializando motor OCR…');
+  gnosSetProgreso(0, 'Iniciando…', 0);
   try {
-    var result = await Tesseract.recognize(
-      currentSrc,
-      'spa+eng',
-      {logger: function(m){
-        if (!m || !m.status) return;
-        if      (m.status === 'loading tesseract core')       setProgreso(5,  'Cargando motor OCR…');
-        else if (m.status === 'initializing api')             setProgreso(12, 'Inicializando API…');
-        else if (m.status === 'loading language traineddata') setProgreso(22, 'Cargando idioma…');
-        else if (m.status === 'initializing tesseract')       setProgreso(35, 'Preparando reconocimiento…');
-        else if (m.status === 'recognizing text')             setProgreso(40 + Math.round((m.progress||0)*55), 'Reconociendo texto…');
-      }}
-    );
-    setProgreso(98,'Extrayendo campos…');
-    var texto = result.data.text;
-    var extraido = extractFields(texto, campos);
-    setProgreso(100,'Completado');
+    var texto = await gnosReconocerTexto(currentSrc);
+    gnosSetProgreso(95, 'Mapeando campos MARC21…', 3);
+    var marc = procesarOCR(texto, campos);
+    gnosSetProgreso(100, 'Completado', 3);
     setTimeout(function(){
       document.getElementById('ocr-prog').style.display = 'none';
-      renderTabla(extraido, campos);
+      gnosRenderTabla(marc, campos);
       var secR = document.getElementById('sec-results');
       secR.style.display = 'block';
       secR.scrollIntoView({behavior:'smooth', block:'nearest'});
-    }, 500);
+    }, 600);
   } catch(err){
-    setProgreso(0,'Error: ' + (err.message || 'Falló el reconocimiento'));
-    setTimeout(function(){document.getElementById('ocr-prog').style.display='none';}, 3500);
+    gnosSetProgreso(0, 'Error: ' + (err.message || 'Falló el reconocimiento'), 0);
+    setTimeout(function(){document.getElementById('ocr-prog').style.display='none';}, 4500);
   } finally {
     btnScan.disabled = false;
     btnElim.disabled = false;
   }
 }
 
-// ── Extracción de campos bibliográficos ───────────────────────────
-function extractFields(text, campos){
-  var out = {};
-  var lines = text.split(/\r?\n/).map(function(l){return l.trim();}).filter(Boolean);
+// ── Mejora 4: Definición de filas de tabla MARC21 ─────────────────
+// campo: id del checkbox que habilita esta fila
+var MARC_ROWS = [
+  { tag:'100', sub:'a', label:'Autor principal',      campo:'autor',     rep:false },
+  { tag:'100', sub:'d', label:'Autor — fechas',       campo:'autor',     rep:false },
+  { tag:'245', sub:'a', label:'Título',               campo:'titulo',    rep:false },
+  { tag:'245', sub:'b', label:'Subtítulo',            campo:'titulo',    rep:false },
+  { tag:'250', sub:'a', label:'Edición',              campo:'edicion',   rep:false },
+  { tag:'264', sub:'a', label:'Lugar de publicación', campo:'pie',       rep:false },
+  { tag:'264', sub:'b', label:'Editorial',            campo:'pie',       rep:false },
+  { tag:'264', sub:'c', label:'Año',                  campo:'pie',       rep:false },
+  { tag:'020', sub:'a', label:'ISBN-13',              campo:'isbn',      rep:true  },
+  { tag:'020', sub:'z', label:'ISBN-10 / alt.',       campo:'isbn',      rep:true  },
+  { tag:'700', sub:'*', label:'Autor secundario',     campo:'autor_sec', rep:true  },
+  { tag:'300', sub:'a', label:'Páginas',              campo:'desc',      rep:false },
+  { tag:'300', sub:'b', label:'Ilustraciones',        campo:'desc',      rep:false },
+  { tag:'300', sub:'c', label:'Dimensiones',          campo:'desc',      rep:false },
+  { tag:'082', sub:'a', label:'Clasificación DDC',    campo:'ddc',       rep:false },
+  { tag:'050', sub:'a', label:'Clasificación LC',     campo:'ddc',       rep:false },
+  { tag:'650', sub:'a', label:'Descriptor temático',  campo:'materias',  rep:true  },
+  { tag:'500', sub:'a', label:'Notas generales',      campo:'notas',     rep:false },
+];
 
-  // ISBN / ISSN
-  if (campos.isbn){
-    var m = text.match(/97[89][\s\-]?\d[\d\s\-]{9,}/);
-    if (m) out.isbn = m[0].replace(/\s/g,'').replace(/[^\d\-]/g,'');
-    else {
-      m = text.match(/ISSN[\s:]+(\d{4}[-\s]?\d{3}[\dXx])/i);
-      if (m) out.isbn = 'ISSN ' + m[1];
-    }
+function gnosMarcVal(marc, tag, sub){
+  var entry = marc[tag];
+  if (!entry) return null;
+  // Campo 700: devolver "Apellido, N., [rol]" combinado
+  if (tag === '700'){
+    if (!Array.isArray(entry)) return null;
+    return entry.map(function(e){
+      return (e.a || '') + (e.e ? ' [' + e.e + ']' : '');
+    }).filter(Boolean);
   }
-
-  // Año auxiliar
-  var yrm = text.match(/\b(19[3-9]\d|20[0-2]\d)\b/);
-  var yr = yrm ? yrm[1] : '';
-
-  // Edición
-  if (campos.edicion){
-    var em = text.match(/(\d+)[ªa°.]?\s*[Ee]d(?:ición|\.|\b)/);
-    if (!em) em = text.match(/(Primera|Segunda|Tercera|Cuarta|Quinta|Sexta)\s+[Ee]dic/i);
-    if (em) out.edicion = em[0].trim();
+  if (Array.isArray(entry)){
+    return entry.map(function(e){ return e[sub] || ''; }).filter(Boolean);
   }
-
-  // Descripción física
-  if (campos.desc){
-    var pm = text.match(/(\d{2,4})\s*p(?:áginas?|\.|,|\b)/i);
-    if (pm){
-      out.desc = pm[1] + ' p.';
-      if (/il\.|ils\.|lám\.?/i.test(text)) out.desc += ' : il.';
-      var cm = text.match(/(\d{1,3})\s*cm/);
-      if (cm) out.desc += ' ; ' + cm[1] + ' cm';
-    }
-  }
-
-  // Pie de imprenta
-  if (campos.pie){
-    var pim = text.match(/([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:[,\s][A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*)[\s]*:\s*([A-Za-záéíóúñÁÉÍÓÚÑ][\w\s&.,]{2,40}),\s*((19|20)\d{2})/);
-    if (pim) out.pie = pim[1].trim() + ' : ' + pim[2].trim() + ', ' + pim[3];
-    else if (yr) out.pie = yr;
-  }
-
-  // Clasificación DDC
-  if (campos.ddc){
-    var ddm, ddcs = [];
-    var re = /\b(\d{3}\.\d{1,10})\b/g;
-    while ((ddm = re.exec(text)) !== null) ddcs.push(ddm[1]);
-    if (!ddcs.length){
-      var re2 = /\b([0-9]{3})\b/g;
-      while ((ddm = re2.exec(text)) !== null){
-        var n = parseInt(ddm[1]);
-        if (n >= 1 && n <= 999) ddcs.push(ddm[1]);
-      }
-    }
-    if (ddcs.length) out.ddc = ddcs[0];
-  }
-
-  // Autores: patrón Apellido, Nombre
-  var authorLines = [];
-  lines.forEach(function(line){
-    if (/^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*,\s*[A-ZÁÉÍÓÚÑ]/.test(line)){
-      var clean = line.split(/[;(]/)[0].trim();
-      if (clean.length < 80) authorLines.push(clean);
-    }
-  });
-
-  if (campos.autor    && authorLines.length >= 1) out.autor     = authorLines[0];
-  if (campos.autor_sec && authorLines.length > 1) out.autor_sec = authorLines.slice(1).join(' ; ');
-
-  // Traductor
-  if (campos.traductor){
-    var tm = text.match(/[Tt]rad(?:ucido|ucción|\.)\s*(?:del?\s+\w+\s+)?(?:por\s+)?([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s[A-Za-záéíóúñ]+)*)/);
-    if (tm) out.traductor = tm[1].trim();
-  }
-
-  // Términos de materia
-  if (campos.materias){
-    var sm = text.match(/(?:[Mm]aterias?|[Dd]escriptores?)\s*:?\s*(.{5,120})/);
-    if (sm && sm[1]) out.materias = sm[1].split('\n')[0].trim();
-  }
-
-  // Notas
-  if (campos.notas){
-    var nm = text.match(/[Nn]ota[s]?\s*:?\s*(.{10,150})/);
-    if (nm && nm[1]) out.notas = nm[1].split('\n')[0].trim();
-  }
-
-  // Título: primera línea que no sea autor, número ni metadato
-  if (campos.titulo){
-    for (var ti = 0; ti < Math.min(lines.length, 16); ti++){
-      var line = lines[ti];
-      if (line.length < 4 || line.length > 300) continue;
-      if (/^\d/.test(line)) continue;
-      if (/ISBN|ISSN|©|\(\d{4}\)|^\d{4}$/i.test(line)) continue;
-      if (/^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+,\s/.test(line)) continue;
-      if (/^(No\.|Nota|Materia|Descr|Trad|Pie|©)/i.test(line)) continue;
-      if (!/[a-záéíóúñ]{2}/i.test(line)) continue;
-      out.titulo = line;
-      break;
-    }
-  }
-
-  return out;
+  return entry[sub] || null;
 }
 
-// ── Renderizar tabla ──────────────────────────────────────────────
-function renderTabla(extraido, campos){
-  var activos = CAMPOS.filter(function(c){return campos[c.id];});
+// ── Mejora 4: Renderizado tabla MARC21 ────────────────────────────
+function gnosRenderTabla(marc, campos){
   var thead = document.getElementById('res-thead');
   var tbody = document.getElementById('res-tbody');
+  thead.innerHTML = '';
+  tbody.innerHTML = '';
 
+  // Encabezados con fondo #0C447C
   var htr = document.createElement('tr');
-  activos.forEach(function(c){
+  ['Campo MARC21', 'Etiqueta', 'Valor extraído', 'Estado'].forEach(function(h){
     var th = document.createElement('th');
-    th.textContent = c.label;
+    th.textContent = h;
     htr.appendChild(th);
   });
-  thead.innerHTML = '';
   thead.appendChild(htr);
 
-  var tr = document.createElement('tr');
   var hayVacios = false;
-  activos.forEach(function(c){
-    var td = document.createElement('td');
-    td.contentEditable = 'true';
-    td.title = 'Clic para editar';
-    var val = extraido[c.id] || '';
-    td.textContent = val;
-    if (!val) hayVacios = true;
-    tr.appendChild(td);
+
+  MARC_ROWS.forEach(function(def){
+    // Omitir si el campo no fue seleccionado
+    var camposRequeridos = def.campo === 'autor_sec'
+      ? (campos.autor_sec || campos.traductor)
+      : campos[def.campo];
+    if (!camposRequeridos) return;
+
+    var val  = gnosMarcVal(marc, def.tag, def.sub);
+    var vals = Array.isArray(val) ? val : (val ? [val] : ['']);
+    if (!val || (Array.isArray(val) && !val.length)) hayVacios = true;
+
+    vals.forEach(function(v, idx){
+      var tagDisplay = def.tag + '$' + (def.sub === '*' ? 'a' : def.sub)
+                     + (def.rep && vals.length > 1 ? ' (' + (idx+1) + ')' : '');
+      var lblDisplay = (def.rep && vals.length > 1)
+        ? def.label + ' ' + (idx+1)
+        : def.label;
+
+      var tr = document.createElement('tr');
+
+      // Columna 1: tag MARC
+      var tdTag = document.createElement('td');
+      tdTag.className = 'marc-tag';
+      tdTag.textContent = tagDisplay;
+      tr.appendChild(tdTag);
+
+      // Columna 2: etiqueta
+      var tdLbl = document.createElement('td');
+      tdLbl.className = 'marc-lbl';
+      tdLbl.textContent = lblDisplay;
+      tr.appendChild(tdLbl);
+
+      // Columna 3: valor editable
+      var tdVal = document.createElement('td');
+      tdVal.className = 'marc-val' + (v ? ' extracted' : '');
+      tdVal.contentEditable = 'true';
+      tdVal.title = 'Clic para editar';
+      tdVal.setAttribute('data-tag', def.tag);
+      tdVal.setAttribute('data-sub', def.sub === '*' ? 'a' : def.sub);
+      tdVal.textContent = v;
+      tr.appendChild(tdVal);
+
+      // Columna 4: estado
+      var tdEst = document.createElement('td');
+      tdEst.className = 'marc-status';
+      tdEst.innerHTML = v
+        ? '<span class="badge-ok">Extraído</span>'
+        : '<span class="badge-rev">Revisar</span>';
+      tr.appendChild(tdEst);
+
+      tbody.appendChild(tr);
+    });
   });
-  tbody.innerHTML = '';
-  tbody.appendChild(tr);
+
   document.getElementById('notice-partial').style.display = hayVacios ? 'block' : 'none';
 }
 
-// ── Exportar a Excel ──────────────────────────────────────────────
-function exportarExcel(){
-  var activos = CAMPOS.filter(function(c){
-    var el = document.getElementById('chk-'+c.id);
-    return el && el.checked;
+// ── Mejora 4: Exportación a Excel con SheetJS ─────────────────────
+function gnosExportarExcel(){
+  var filas = [];
+  var rows  = document.getElementById('res-tbody').querySelectorAll('tr');
+  rows.forEach(function(tr){
+    var celdas = tr.querySelectorAll('td');
+    if (celdas.length < 3) return;
+    filas.push({
+      'Campo MARC21': celdas[0].textContent.trim(),
+      'Etiqueta':     celdas[1].textContent.trim(),
+      'Valor':        celdas[2].textContent.trim(),
+      'Estado':       celdas[3] ? celdas[3].textContent.trim() : ''
+    });
   });
-  var headers = activos.map(function(c){return c.label;});
-  var filas = Array.from(document.getElementById('res-tbody').querySelectorAll('tr')).map(function(tr){
-    return Array.from(tr.querySelectorAll('td')).map(function(td){return td.textContent;});
-  });
+  if (!filas.length){ alert('No hay datos para exportar.'); return; }
   var wb = XLSX.utils.book_new();
-  var ws = XLSX.utils.aoa_to_sheet([headers].concat(filas));
-  ws['!cols'] = headers.map(function(){return {wch:28};});
-  XLSX.utils.book_append_sheet(wb, ws, 'Extracción OCR');
-  XLSX.writeFile(wb, 'extraccion_ocr_gnos.xlsx');
+  var ws = XLSX.utils.json_to_sheet(filas);
+  ws['!cols'] = [{ wch:16 }, { wch:24 }, { wch:62 }, { wch:12 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'OCR MARC21');
+  XLSX.writeFile(wb, 'gnos_ocr_' + new Date().toISOString().slice(0,10) + '.xlsx');
 }
 
-// ── Limpiar todo ──────────────────────────────────────────────────
+// ── Limpiar ────────────────────────────────────────────────────────
 function limpiarTodo(){
   eliminarImagen();
   document.getElementById('res-thead').innerHTML = '';
