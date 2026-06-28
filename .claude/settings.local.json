@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__visualize__read_me",
+      "mcp__visualize__show_widget",
+      "Read(//c/Users/jeanc/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/0b0ec5f0-0bc9-4925-9793-03a2becf56a6/1b714b14-e2d3-4b09-86c3-bfcdc14ad898/skills/xlsx/**)",
+      "Bash(python -c ' *)",
+      "Bash(python -c \"import openpyxl; wb = openpyxl.load_workbook\\(r'C:\\\\Users\\\\jeanc\\\\Downloads\\\\prueba.xlsx'\\); print\\('Sheets:', wb.sheetnames\\); ws = wb.active; print\\('Dims:', ws.dimensions\\); rows = list\\(ws.iter_rows\\(values_only=True\\)\\); print\\('Rows:', len\\(rows\\)\\); [print\\(r\\) for r in rows[:15]]\")",
+      "PowerShell(python -c \"import openpyxl; wb = openpyxl.load_workbook\\(r'C:\\\\Users\\\\jeanc\\\\Downloads\\\\prueba.xlsx'\\); ws = wb.active; print\\('Sheets:', wb.sheetnames\\); rows = list\\(ws.iter_rows\\(values_only=True\\)\\); print\\('Total rows:', len\\(rows\\)\\); [print\\(i, r\\) for i, r in enumerate\\(rows[:20]\\)]\")",
+      "PowerShell(python --version)",
+      "PowerShell(pip install openpyxl --quiet 2>&1)",
+      "PowerShell(py --version 2>$null)",
+      "PowerShell(python3 --version 2>$null)",
+      "PowerShell(python3 --version)",
+      "PowerShell(python3 -c \"print\\('ok'\\)\")",
+      "PowerShell(pip install openpyxl 2>&1)"
+    ]
+  }
+}

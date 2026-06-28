@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIBNORM — Sistema de Normalización Bibliográfica</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background: linear-gradient(160deg, #EAF0FA 0%, #EEF3FD 55%, #E6EEF8 100%); min-height: 100vh; color: #1a1a18; }
+
+    /* ── Header ── */
+    header {
+      background: #0C447C;
+      padding: 0 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-name { font-size: 19px; font-weight: 700; color: #E6F1FB; letter-spacing: .5px; line-height: 1; }
+    .logo-sub  { font-size: 11px; color: #85B7EB; margin-top: 2px; }
+    .btn-ham {
+      background: none; border: none; cursor: pointer;
+      color: #E6F1FB; font-size: 24px;
+      width: 40px; height: 40px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .btn-ham:hover { background: rgba(255,255,255,.12); }
+
+    /* ── Main ── */
+    main { max-width: 1100px; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
+
+    .section-intro { text-align: center; margin-bottom: 2.75rem; }
+    .section-intro h2 { font-size: 30px; font-weight: 700; color: #0C447C; margin-bottom: 10px; letter-spacing: -.2px; }
+    .section-intro p  { font-size: 15px; color: #5c5c59; }
+
+    /* ── Cards ── */
+    .grid { display: flex; flex-direction: column; gap: 20px; }
+    .grid-row { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    .grid-row .card { flex: 0 0 calc(33.333% - 14px); min-width: 200px; max-width: 340px; }
+    @media (max-width: 760px) { .grid-row .card { flex: 0 0 calc(50% - 10px); max-width: none; } }
+    @media (max-width: 480px) { .grid-row .card { flex: 1 0 100%; max-width: 100%; } }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 30px 20px 26px;
+      text-align: center;
+      box-shadow: 0 2px 14px rgba(12,68,124,.07), 0 1px 3px rgba(0,0,0,.04);
+      transition: transform .18s ease, box-shadow .18s ease;
+      text-decoration: none;
+      display: block;
+      border: 0.5px solid rgba(12,68,124,.06);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 32px rgba(12,68,124,.16);
+    }
+    .icon-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 34px;
+    }
+    .card-title { font-size: 13.5px; font-weight: 700; color: #1a1a18; margin-bottom: 7px; }
+    .card-desc  { font-size: 12px; color: #5c5c59; line-height: 1.55; }
+
+    /* ── OCR Banner ── */
+    .ocr-banner {
+      margin-top: 2.75rem;
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 14px rgba(12,68,124,.07);
+      border: 0.5px solid rgba(12,68,124,.06);
+    }
+    .ocr-left { display: flex; align-items: center; gap: 1.25rem; }
+    .ocr-icon {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(0,137,123,.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; color: #00897B; flex-shrink: 0;
+    }
+    .ocr-text h3 { font-size: 14px; font-weight: 700; color: #0C447C; margin-bottom: 4px; }
+    .ocr-text p  { font-size: 12.5px; color: #5c5c59; max-width: 520px; }
+    .btn-ocr {
+      background: #0C447C; color: #fff;
+      border: none; padding: 11px 22px;
+      border-radius: 9px; font-size: 13px; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+      text-decoration: none; display: inline-block;
+      transition: background .15s;
+    }
+    .btn-ocr:hover { background: #185FA5; }
+
+    /* ── Hamburger overlay + panel ── */
+    #mbg {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.45); z-index: 900;
+    }
+    #mnav {
+      position: fixed; top: 0; right: -320px;
+      width: 300px; max-width: 90vw; height: 100%;
+      background: #0C447C; z-index: 901;
+      transition: right .28s ease;
+      overflow-y: auto;
+      box-shadow: -4px 0 30px rgba(0,0,0,.3);
+    }
+    #mnav.open { right: 0; }
+    .mn-close {
+      display: flex; justify-content: flex-end;
+      padding: 1.1rem 1.25rem .5rem;
+    }
+    .mn-close button {
+      background: none; border: none; color: #E6F1FB;
+      font-size: 22px; cursor: pointer;
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .mn-close button:hover { background: rgba(255,255,255,.12); }
+    .mn-list { list-style: none; padding: 0 .75rem; margin: 0; }
+    .mn-list li a {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 0.5px solid rgba(255,255,255,.1);
+      text-decoration: none; border-radius: 8px;
+      transition: background .15s;
+    }
+    .mn-list li:last-child a { border-bottom: none; }
+    .mn-list li a:hover { background: rgba(255,255,255,.08); }
+    .mn-ico   { font-size: 22px; margin-top: 2px; flex-shrink: 0; }
+    .mn-label { font-size: 14px; font-weight: 600; color: #E6F1FB; margin-bottom: 3px; }
+    .mn-sub   { font-size: 12px; color: #85B7EB; line-height: 1.4; }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+  <a class="logo" href="index.html">
+    <div class="logo-icon">
+      <i class="ti ti-books" style="font-size:22px;color:#85B7EB" aria-hidden="true"></i>
+    </div>
+    <div>
+      <div class="logo-name">BIBNORM</div>
+      <div class="logo-sub">Sistema institucional de normalización bibliográfica</div>
+    </div>
+  </a>
+  <button class="btn-ham" onclick="openMbg()" aria-label="Abrir menú">
+    <i class="ti ti-menu-2" aria-hidden="true"></i>
+  </button>
+</header>
+
+<!-- ── Hamburger overlay ── -->
+<div id="mbg" onclick="closeMbg()"></div>
+
+<!-- ── Side nav panel ── -->
+<nav id="mnav" aria-label="Menú principal">
+  <div class="mn-close">
+    <button onclick="closeMbg()" aria-label="Cerrar menú">
+      <i class="ti ti-x" aria-hidden="true"></i>
+    </button>
+  </div>
+  <ul class="mn-list">
+    <li><a href="index.html">
+      <span class="mn-ico">🏠</span>
+      <div><div class="mn-label">Inicio</div><div class="mn-sub">Ir a la página principal</div></div>
+    </a></li>
+    <li><a href="#">
+      <span class="mn-ico">🕐</span>
+      <div><div class="mn-label">Historial</div><div class="mn-sub">Ver registros procesados</div></div>
+    </a></li>
+    <li><a href="#">
+      <span class="mn-ico">❓</span>
+      <div><div class="mn-label">Ayuda</div><div class="mn-sub">Centro de ayuda y soporte</div></div>
+    </a></li>
+    <li><a href="modulos/contacto.html">
+      <span class="mn-ico">✉️</span>
+      <div><div class="mn-label">Contacto y sugerencias</div><div class="mn-sub">Envianos tus comentarios o reporta un error</div></div>
+    </a></li>
+  </ul>
+</nav>
+
+<!-- ── Main ── -->
+<main>
+  <div class="section-intro">
+    <h2>¿Qué deseas hacer hoy?</h2>
+    <p>Elige el tipo de material bibliográfico a normalizar</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="grid-row">
+      <a class="card" href="modulos/revistas.html">
+        <div class="icon-circle" style="background:rgba(0,137,123,.11)">
+          <i class="ti ti-article" style="color:#00897B" aria-hidden="true"></i>
+        </div>
+        <div class="card-title">Artículos de revistas</div>
+        <div class="card-desc">Normaliza y estandariza artículos de revistas académicas.</div>
+      </a>
+
+      <a class="card" href="modulos/libros.html">
+        <div class="icon-circle" style="background:rgba(24,95,165,.11)">
+          <i class="ti ti-book" style="color:#185FA5" aria-hidden="true"></i>
+        </div>
+        <div class="card-title">Libros</div>
+        <div class="card-desc">Normaliza y estandariza registros bibliográficos de libros.</div>
+      </a>
+    </div>
+
+    <div class="grid-row">
+      <a class="card" href="modulos/tesis.html">
+        <div class="icon-circle" style="background:rgba(124,58,237,.11)">
+          <i class="ti ti-school" style="color:#7C3AED" aria-hidden="true"></i>
+        </div>
+        <div class="card-title">Tesis</div>
+        <div class="card-desc">Estandariza referencias bibliográficas de tesis y tesinas.</div>
+      </a>
+
+      <a class="card" href="modulos/audiovisual.html">
+        <div class="icon-circle" style="background:rgba(225,29,72,.11)">
+          <i class="ti ti-movie" style="color:#BE123C" aria-hidden="true"></i>
+        </div>
+        <div class="card-title">Material audiovisual</div>
+        <div class="card-desc">Procesa registros de videos, grabaciones, CDs, DVDs y demás materiales audiovisuales.</div>
+      </a>
+
+      <a class="card" href="modulos/referencias.html">
+        <div class="icon-circle" style="background:rgba(99,102,241,.11)">
+          <i class="ti ti-quote" style="color:#4F46E5" aria-hidden="true"></i>
+        </div>
+        <div class="card-title">Referencias bibliográficas</div>
+        <div class="card-desc">Genera automáticamente referencias en formato APA, Chicago, Vancouver y más.</div>
+      </a>
+    </div>
+
+  </div><!-- /grid -->
+
+  <!-- ── OCR Banner ── -->
+  <div class="ocr-banner">
+    <div class="ocr-left">
+      <div class="ocr-icon">
+        <i class="ti ti-camera" aria-hidden="true"></i>
+      </div>
+      <div class="ocr-text">
+        <h3>Extracción de información con OCR</h3>
+        <p>Extrae automáticamente datos bibliográficos a partir de imágenes de portadas o páginas de información.</p>
+      </div>
+    </div>
+    <a href="modulos/ocr.html" class="btn-ocr">Ir al OCR &rarr;</a>
+  </div>
+
+</main>
+
+<script>
+function openMbg() {
+  document.getElementById('mbg').style.display = 'block';
+  document.getElementById('mnav').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMbg() {
+  document.getElementById('mbg').style.display = 'none';
+  document.getElementById('mnav').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMbg(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIBNORM — Contacto y sugerencias</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:linear-gradient(160deg,#EAF0FA 0%,#EEF3FD 55%,#E6EEF8 100%);min-height:100vh;color:#1a1a18}
+
+    /* Header */
+    header{background:#0C447C;padding:0 1.75rem;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+    .logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+    .logo-icon{width:40px;height:40px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:9px;display:flex;align-items:center;justify-content:center}
+    .logo-name{font-size:19px;font-weight:700;color:#E6F1FB;letter-spacing:.5px;line-height:1}
+    .logo-sub{font-size:11px;color:#85B7EB;margin-top:2px}
+    .btn-ham{background:none;border:none;cursor:pointer;color:#E6F1FB;font-size:24px;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .btn-ham:hover{background:rgba(255,255,255,.12)}
+
+    /* Form card */
+    main{max-width:580px;margin:0 auto;padding:3rem 1.5rem 5rem}
+    .card{background:#fff;border-radius:16px;padding:2.25rem 2rem;box-shadow:0 2px 14px rgba(12,68,124,.08);border:0.5px solid rgba(12,68,124,.06)}
+    .card-header{display:flex;align-items:center;gap:14px;margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:0.5px solid #ebebeb}
+    .card-icon{width:48px;height:48px;border-radius:50%;background:rgba(24,95,165,.1);display:flex;align-items:center;justify-content:center;font-size:22px;color:#185FA5;flex-shrink:0}
+    .card-header h1{font-size:18px;font-weight:700;color:#0C447C;line-height:1.2}
+    .card-header p{font-size:12px;color:#5c5c59;margin-top:3px}
+
+    .form-group{margin-bottom:1.1rem}
+    label{display:block;font-size:12px;font-weight:600;color:#5c5c59;margin-bottom:5px;letter-spacing:.2px}
+    input,textarea{
+      width:100%;background:#f9f9f8;
+      border:0.5px solid rgba(0,0,0,.14);
+      border-radius:8px;color:#1a1a18;
+      font-family:inherit;font-size:13.5px;
+      padding:10px 13px;
+      transition:border-color .15s,box-shadow .15s;
+    }
+    input:focus,textarea:focus{
+      outline:none;border-color:#185FA5;
+      box-shadow:0 0 0 3px rgba(24,95,165,.1);
+      background:#fff;
+    }
+    textarea{resize:vertical;min-height:130px;line-height:1.5}
+
+    .btn-send{
+      width:100%;background:#0C447C;color:#fff;
+      border:none;padding:13px;border-radius:9px;
+      font-size:14px;font-weight:600;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      margin-top:1.5rem;transition:background .15s;
+    }
+    .btn-send:hover{background:#185FA5}
+    .btn-send:active{transform:scale(.98)}
+
+    .alert{
+      display:none;margin-top:1rem;padding:11px 14px;
+      border-radius:8px;font-size:13px;font-weight:500;
+      align-items:center;gap:9px;
+    }
+    .alert.success{background:#EAF3DE;color:#276749;border:0.5px solid rgba(39,103,73,.25)}
+    .alert.error  {background:#FEE9E9;color:#9b1c1c;border:0.5px solid rgba(155,28,28,.25)}
+
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#185FA5;text-decoration:none;margin-bottom:1.5rem;font-weight:500}
+    .back-link:hover{text-decoration:underline}
+
+    /* Hamburger */
+    #mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900}
+    #mnav{position:fixed;top:0;right:-320px;width:300px;max-width:90vw;height:100%;background:#0C447C;z-index:901;transition:right .28s ease;overflow-y:auto;box-shadow:-4px 0 30px rgba(0,0,0,.3)}
+    #mnav.open{right:0}
+    .mn-close{display:flex;justify-content:flex-end;padding:1.1rem 1.25rem .5rem}
+    .mn-close button{background:none;border:none;color:#E6F1FB;font-size:22px;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .mn-close button:hover{background:rgba(255,255,255,.12)}
+    .mn-list{list-style:none;padding:0 .75rem;margin:0}
+    .mn-list li a{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:0.5px solid rgba(255,255,255,.1);text-decoration:none;border-radius:8px;transition:background .15s}
+    .mn-list li:last-child a{border-bottom:none}
+    .mn-list li a:hover{background:rgba(255,255,255,.08)}
+    .mn-ico{font-size:22px;margin-top:2px;flex-shrink:0}
+    .mn-label{font-size:14px;font-weight:600;color:#E6F1FB;margin-bottom:3px}
+    .mn-sub{font-size:12px;color:#85B7EB;line-height:1.4}
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="../index.html">
+    <div class="logo-icon"><i class="ti ti-books" style="font-size:22px;color:#85B7EB" aria-hidden="true"></i></div>
+    <div><div class="logo-name">BIBNORM</div><div class="logo-sub">Sistema institucional de normalización bibliográfica</div></div>
+  </a>
+  <div style="display:flex;align-items:center;gap:4px">
+    <a class="btn-ham" href="../index.html" title="Inicio" aria-label="Ir al inicio" style="text-decoration:none"><i class="ti ti-home" aria-hidden="true"></i></a>
+    <button class="btn-ham" onclick="openMbg()" aria-label="Abrir menú"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
+  </div>
+</header>
+
+<div id="mbg" onclick="closeMbg()"></div>
+<nav id="mnav" aria-label="Menú principal">
+  <div class="mn-close"><button onclick="closeMbg()" aria-label="Cerrar menú"><i class="ti ti-x" aria-hidden="true"></i></button></div>
+  <ul class="mn-list">
+    <li><a href="../index.html"><span class="mn-ico">🏠</span><div><div class="mn-label">Inicio</div><div class="mn-sub">Ir a la página principal</div></div></a></li>
+    <li><a href="#"><span class="mn-ico">🕐</span><div><div class="mn-label">Historial</div><div class="mn-sub">Ver registros procesados</div></div></a></li>
+    <li><a href="#"><span class="mn-ico">❓</span><div><div class="mn-label">Ayuda</div><div class="mn-sub">Centro de ayuda y soporte</div></div></a></li>
+    <li><a href="contacto.html"><span class="mn-ico">✉️</span><div><div class="mn-label">Contacto y sugerencias</div><div class="mn-sub">Envianos tus comentarios o reporta un error</div></div></a></li>
+  </ul>
+</nav>
+
+<main>
+  <a class="back-link" href="../index.html">
+    <i class="ti ti-arrow-left" aria-hidden="true"></i> Volver al inicio
+  </a>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon"><i class="ti ti-message-circle" aria-hidden="true"></i></div>
+      <div>
+        <h1>Contacto y sugerencias</h1>
+        <p>Envianos tus comentarios, sugerencias o reportá un error</p>
+      </div>
+    </div>
+
+    <form id="sgForm" onsubmit="sendForm(event)" novalidate>
+      <div class="form-group">
+        <label for="sgName">Nombre completo <span style="color:#9b1c1c">*</span></label>
+        <input id="sgName" type="text" placeholder="Ej. María González" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label for="sgEmail">Correo electrónico <span style="color:#9b1c1c">*</span></label>
+        <input id="sgEmail" type="email" placeholder="correo@institución.org" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="sgMsg">Mensaje / sugerencia <span style="color:#9b1c1c">*</span></label>
+        <textarea id="sgMsg" placeholder="Describí tu comentario, sugerencia o el error que encontraste…"></textarea>
+      </div>
+
+      <div id="sgErr" class="alert error">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i>
+        <span>Por favor completá todos los campos antes de enviar.</span>
+      </div>
+      <div id="sgOk" class="alert success">
+        <i class="ti ti-circle-check" aria-hidden="true"></i>
+        <span>¡Gracias! Tu mensaje fue enviado correctamente.</span>
+      </div>
+
+      <button type="submit" class="btn-send" id="sgBtn">
+        <i class="ti ti-send" aria-hidden="true"></i> Enviar sugerencia
+      </button>
+    </form>
+  </div>
+</main>
+
+<script>
+function openMbg(){document.getElementById('mbg').style.display='block';document.getElementById('mnav').classList.add('open');document.body.style.overflow='hidden';}
+function closeMbg(){document.getElementById('mbg').style.display='none';document.getElementById('mnav').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMbg();});
+
+function sendForm(e) {
+  e.preventDefault();
+  var name  = document.getElementById('sgName').value.trim();
+  var email = document.getElementById('sgEmail').value.trim();
+  var msg   = document.getElementById('sgMsg').value.trim();
+  var err   = document.getElementById('sgErr');
+  var ok    = document.getElementById('sgOk');
+  var btn   = document.getElementById('sgBtn');
+
+  err.style.display = 'none';
+  ok.style.display  = 'none';
+
+  if (!name || !email || !msg) {
+    err.style.display = 'flex';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader" aria-hidden="true"></i> Enviando…';
+
+  setTimeout(function() {
+    btn.innerHTML = '<i class="ti ti-send" aria-hidden="true"></i> Enviar sugerencia';
+    btn.disabled = false;
+    document.getElementById('sgName').value  = '';
+    document.getElementById('sgEmail').value = '';
+    document.getElementById('sgMsg').value   = '';
+    ok.style.display = 'flex';
+    setTimeout(function(){ ok.style.display = 'none'; }, 5000);
+  }, 1200);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIBNORM — Plataforma de Normalización Bibliográfica</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --surface-0:#f4f3ef;--surface-1:#ebebeb;--surface-2:#ffffff;
+      --text-primary:#1a1a18;--text-secondary:#5c5c59;--text-muted:#9b9b97;
+      --text-accent:#185FA5;--text-success:#276749;--text-warning:#8a5a08;--text-danger:#9b1c1c;
+      --bg-accent:#E6F1FB;--bg-success:#EAF3DE;--bg-warning:#FFF3DC;--bg-danger:#FEE9E9;
+      --border:rgba(0,0,0,.1);--border-accent:rgba(56,138,221,.35);
+      --border-success:rgba(39,103,73,.3);--border-warning:rgba(190,120,20,.3);--border-danger:rgba(155,28,28,.3);
+      --radius:6px;
+    }
+    body{margin:0;padding:2rem 1rem;background:linear-gradient(160deg,#EAF0FA 0%,#EEF3FD 55%,#E6EEF8 100%);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px;color:var(--text-primary);min-height:100vh;}
+    .wrap{max-width:1300px;margin:0 auto;}
+    #bib{border-radius:12px;overflow:hidden;border:0.5px solid var(--border);}
+    .bt{width:100%;border-collapse:collapse;font-size:12px;}
+    .bt th{background:var(--surface-1);color:var(--text-secondary);font-weight:500;padding:6px 8px;border:0.5px solid var(--border);text-align:left;white-space:nowrap;position:relative;}
+    .bt td{padding:5px 8px;border:0.5px solid var(--border);color:var(--text-primary);vertical-align:middle;}
+    .it td[contenteditable]{min-width:100px;min-height:26px;}
+    .it td[contenteditable]:focus{background:var(--bg-accent);outline:none;}
+    .it td[contenteditable]:empty::before{content:'\00a0';}
+    .rn{text-align:center;color:var(--text-muted);font-size:11px;user-select:none;background:var(--surface-1)!important;width:30px;min-width:30px;max-width:30px;}
+    .ch{text-align:center;min-width:100px;cursor:default;user-select:none;}
+    .ch .del-col{display:none;position:absolute;top:50%;right:3px;transform:translateY(-50%);cursor:pointer;color:var(--text-danger);font-size:12px;line-height:1;padding:1px 2px;}
+    .ch:hover .del-col{display:inline;}
+    .ch:hover{background:var(--bg-warning);}
+    .add-col-th{background:var(--surface-1)!important;color:var(--text-accent)!important;text-align:center;cursor:pointer;min-width:36px;width:36px;font-size:18px;padding:3px!important;border:0.5px dashed var(--border-accent)!important;}
+    .add-col-th:hover{background:var(--bg-accent)!important;}
+    .mod{background:var(--bg-warning)!important;}
+    .rev>td{background:var(--bg-danger)!important;}
+    .pg-track{background:var(--surface-0);border-radius:10px;height:20px;overflow:hidden;border:0.5px solid var(--border);}
+    .pg-fill{height:100%;background:#185FA5;width:0%;transition:width .08s linear;border-radius:10px;}
+    button{background:transparent;border:0.5px solid var(--border);border-radius:var(--radius);color:var(--text-primary);cursor:pointer;font-family:inherit;font-size:13px;line-height:1.4;}
+    button:hover{background:var(--surface-1);}
+    button:active{transform:scale(.98);}
+    .bb{background:#185FA5;color:#fff;border:none;padding:8px 16px;font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:6px;}
+    .bb:hover{background:#0C447C;color:#fff;}
+    .bb:disabled{opacity:.5;cursor:default;}
+    input,textarea{background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius);color:var(--text-primary);font-family:inherit;font-size:13px;padding:8px 10px;}
+    input:focus,textarea:focus{outline:none;border-color:#185FA5;box-shadow:0 0 0 3px var(--bg-accent);}
+    label{display:block;font-size:11.5px;color:var(--text-secondary);margin-bottom:4px;font-weight:500;}
+    .ref-chip{display:inline-block;font-size:11px;background:var(--surface-1);border:0.5px solid var(--border);border-radius:var(--radius);padding:2px 7px;color:var(--text-secondary);white-space:nowrap;}
+    .ref-chip.key{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent);}
+    .badge{font-size:11px;padding:2px 8px;border-radius:var(--radius);display:inline-block;}
+    .badge-w{background:var(--bg-warning);color:var(--text-warning);border:0.5px solid var(--border-warning);}
+    .badge-d{background:var(--bg-danger);color:var(--text-danger);border:0.5px solid var(--border-danger);}
+    .badge-g{background:var(--bg-success);color:var(--text-success);border:0.5px solid var(--border-success);}
+    .sec{padding:1.25rem 1.5rem;background:var(--surface-2);}
+    .tbl-wrap{overflow-x:auto;border-radius:var(--radius);border:0.5px solid var(--border);}
+  </style>
+</head>
+<body>
+<div class="wrap"><div id="bib">
+
+  <!-- Header -->
+  <div style="background:#0C447C;padding:1.25rem 1.75rem">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
+          <i class="ti ti-books" style="font-size:20px;color:#85B7EB" aria-hidden="true"></i>
+          <span style="font-size:21px;font-weight:500;color:#E6F1FB;letter-spacing:.4px">BIBNORM</span>
+        </div>
+        <p style="font-size:12.5px;color:#85B7EB;margin:0;line-height:1.5">
+          Normalización y estandarización de artículos de revistas académicas · Estándares MARC21
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;margin-top:2px">
+        <a href="../index.html" title="Ir al inicio" aria-label="Inicio" style="color:#E6F1FB;font-size:22px;padding:6px;border-radius:6px;line-height:1;text-decoration:none;display:flex;align-items:center;">
+          <i class="ti ti-home" aria-hidden="true"></i>
+        </a>
+        <button onclick="openMbg()" aria-label="Abrir menú" style="background:none;border:none;cursor:pointer;color:#E6F1FB;font-size:22px;padding:6px;border-radius:6px;line-height:1;">
+          <i class="ti ti-menu-2" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de entrada -->
+  <section class="sec">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <h2 style="font-size:15px;font-weight:500;margin:0 0 3px">Tabla de entrada — datos en bruto</h2>
+        <p style="font-size:11.5px;color:var(--text-muted);margin:0">
+          <i class="ti ti-clipboard" style="font-size:12px;vertical-align:-1px" aria-hidden="true"></i>
+          Pegue sus datos de Excel con <strong>Ctrl+V</strong> · El sistema normaliza exactamente lo que usted ingrese
+        </p>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:2px">
+        <button onclick="loadDemo()" style="font-size:12px;padding:5px 10px;color:var(--text-accent);border-color:var(--border-accent);display:flex;align-items:center;gap:4px">
+          <i class="ti ti-table-import" style="font-size:13px" aria-hidden="true"></i> Cargar demo
+        </button>
+        <button onclick="clearTable()" style="font-size:12px;padding:5px 10px;color:var(--text-secondary);display:flex;align-items:center;gap:4px">
+          <i class="ti ti-trash" style="font-size:13px" aria-hidden="true"></i> Limpiar
+        </button>
+        <button onclick="runValidation()" style="font-size:12px;padding:5px 10px;color:var(--text-success);border-color:var(--border-success);display:flex;align-items:center;gap:4px">
+          <i class="ti ti-list-check" style="font-size:13px" aria-hidden="true"></i> Validar 7 registros
+        </button>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="bt it" id="inputTable">
+        <thead id="inputHead"></thead>
+        <tbody id="inputBody"></tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+      <button onclick="addRow()" style="font-size:12px;padding:5px 12px;color:var(--text-secondary);display:inline-flex;align-items:center;gap:4px">
+        <i class="ti ti-plus" style="font-size:14px" aria-hidden="true"></i> Fila
+      </button>
+      <button onclick="addColumn()" style="font-size:12px;padding:5px 12px;color:var(--text-accent);display:inline-flex;align-items:center;gap:4px;border-color:var(--border-accent)">
+        <i class="ti ti-plus" style="font-size:14px" aria-hidden="true"></i> Columna
+      </button>
+      <span id="cellCount" style="font-size:11.5px;color:var(--text-muted);margin-left:4px"></span>
+    </div>
+  </section>
+
+  <!-- Panel de referencia -->
+  <div style="background:var(--surface-1);border-top:0.5px solid var(--border)">
+    <button onclick="toggleRef()" style="width:100%;border:none;border-radius:0;padding:10px 1.5rem;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-secondary);background:transparent;text-align:left">
+      <i class="ti ti-columns" style="font-size:15px;color:var(--text-accent)" aria-hidden="true"></i>
+      <span>Ver columnas de referencia — estructura destino (58 campos MARC21)</span>
+      <i class="ti ti-chevron-down" id="refChevron" style="font-size:14px;margin-left:auto;transition:transform .2s" aria-hidden="true"></i>
+    </button>
+    <div id="refPanel" style="display:none;padding:0 1.5rem 1rem">
+      <p style="font-size:11.5px;color:var(--text-muted);margin:0 0 8px">
+        Los datos pegados se reordenan y formatean para coincidir con esta estructura.
+        <span style="background:var(--bg-accent);color:var(--text-accent);padding:1px 6px;border-radius:var(--radius);font-size:11px;margin-left:4px">Azul = campos clave</span>
+      </p>
+      <div id="refChips" style="display:flex;flex-wrap:wrap;gap:4px"></div>
+    </div>
+  </div>
+
+  <!-- Barra de procesamiento -->
+  <div style="background:var(--surface-2);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);padding:.9rem 1.5rem">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <button class="bb" id="processBtn" onclick="startProcessing()">
+        <i class="ti ti-player-play" aria-hidden="true"></i> Iniciar normalización
+      </button>
+      <div id="pwrap" style="flex:1;min-width:220px;display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <span id="plbl" style="font-size:12px;color:var(--text-secondary)">Iniciando proceso…</span>
+          <span id="ppct" style="font-size:12px;font-weight:500;color:#185FA5">0 %</span>
+        </div>
+        <div class="pg-track"><div class="pg-fill" id="pfill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <section id="resultsSection" style="display:none;padding:1.25rem 1.5rem;background:var(--surface-2);border-top:0.5px solid var(--border)">
+    <div style="background:var(--bg-success);border:0.5px solid var(--border-success);border-radius:var(--radius);padding:11px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <i class="ti ti-circle-check" style="font-size:19px;color:var(--text-success);flex-shrink:0" aria-hidden="true"></i>
+      <div style="flex:1;min-width:150px">
+        <p style="font-size:13px;font-weight:500;color:var(--text-success);margin:0">Normalización completada</p>
+        <p id="resultsSummary" style="font-size:11.5px;color:var(--text-success);margin:2px 0 0;opacity:.85"></p>
+      </div>
+      <div id="resultsBadges" style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0"></div>
+    </div>
+
+    <div id="corrNotice" style="display:none;margin-bottom:10px;font-size:12px;color:var(--text-warning);background:var(--bg-warning);padding:8px 12px;border-radius:var(--radius);border:0.5px solid var(--border-warning)">
+      <i class="ti ti-exchange" style="font-size:13px;vertical-align:-1px" aria-hidden="true"></i>
+      <span id="corrMsg"></span>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <h2 style="font-size:14px;font-weight:500;margin:0">Registros normalizados — 58 columnas MARC21</h2>
+      <div style="display:flex;gap:6px;font-size:11px;flex-wrap:wrap">
+        <span style="background:var(--bg-warning);color:var(--text-warning);padding:3px 8px;border-radius:var(--radius)">
+          <i class="ti ti-pencil" style="font-size:11px" aria-hidden="true"></i> Campo corregido
+        </span>
+        <span style="background:var(--bg-danger);color:var(--text-danger);padding:3px 8px;border-radius:var(--radius)">
+          <i class="ti ti-alert-triangle" style="font-size:11px" aria-hidden="true"></i> Revisión manual
+        </span>
+      </div>
+    </div>
+
+    <div class="tbl-wrap" style="margin-bottom:.9rem">
+      <table class="bt" id="resultsTable">
+        <thead id="resultsHead"></thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="bb" style="font-size:12.5px"><i class="ti ti-download" aria-hidden="true"></i> Exportar CSV</button>
+      <button style="padding:8px 16px;font-size:12.5px;display:inline-flex;align-items:center;gap:6px">
+        <i class="ti ti-file-description" aria-hidden="true"></i> Generar reporte
+      </button>
+      <button onclick="resetAll()" style="margin-left:auto;padding:8px 16px;font-size:12.5px;display:inline-flex;align-items:center;gap:6px">
+        <i class="ti ti-refresh" aria-hidden="true"></i> Nuevo proceso
+      </button>
+    </div>
+  </section>
+
+  <!-- Validación automática -->
+  <section id="validSection" style="display:none;padding:1.25rem 1.5rem;background:var(--surface-2);border-top:0.5px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <i class="ti ti-list-check" style="font-size:17px;color:var(--text-success)" aria-hidden="true"></i>
+        <h2 style="font-size:15px;font-weight:500;margin:0">Validación automática — 7 registros de referencia</h2>
+      </div>
+      <span id="validSummary" style="font-size:12px;padding:3px 10px;border-radius:var(--radius)"></span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="bt" id="validTable">
+        <thead id="validHead"></thead>
+        <tbody id="validBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+
+</div></div>
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  ESTRUCTURA DE REFERENCIA (58 columnas — prueba.xlsx)
+// ═══════════════════════════════════════════════════════════════════
+var REF_COLS=[
+  'Id 3','942$c','942$a','040$a','040$c','Signatura 090$a',
+  'Autor Principal 100$a','Título 245$a','Subtítulo 245$b','Columna1',
+  'País 260$a','Editorial 260$b','Año 260$c','Descripción Física 300$a','Columna8','Columna2',
+  'Autor Secundario 700$a','Columna3','Documento Fuente 773$a',
+  '773$g partes Vol. x, No. x (mes, año), p. x-x','Notas de Origen',
+  'Idioma Principal 041$a','ISBN / ISSN / No. Publicación',
+  'Otros Títulos','Notas','Título Completo','Author (text)','Copy Barcodes',
+  'Otros','Descriptores (texto)','Códigos de Barra','Otros (Congreso, Conferencia, etc.)',
+  'Imagen Principal','In Frontpage','Temp 1','Número de Ejemplares',
+  'Secondary Author (Temp)','Colección 852$b','Resumen 520$a',
+  'Descriptores No normalizados 653$a',
+  'Columna15','Columna14','Columna13','Columna12',
+  'Columna5','Columna6','Columna7','Columna11','Columna10','Columna9','Columna4',
+  'Descriptores normalizados 650$a',
+  '856$u','856$y','856$m','856$7','856$u2 link en internet','856$y2 Descargar'
+];
+var KEY_COLS=[6,7,8,10,11,12,13,18,19,21,37,39];
+
+// Datos de demostración — 7 registros reales del conjunto DESORDENADO
+// (IDs 60777–60771, International Journal of Refugee Law + Torture journal)
+var DEMO_ROWS=[
+  // Fila 1 — Vesti (International Journal of Refugee Law, 1990)
+  ["60777","ART-REV","Clasificación Propia","crspcidh","crspcidh","I0010","Vesti,  Peter","Torture","the need for an international tribunal to investigate individual doctors who may have been involved ","","Gran Bretaña ","Oxford University Press","1990","páginas 611-619","","","Espersen,  Ole",""," Vol. 2, no. 4 (1990) International Journal of Refugee Law  "," Vol. 2, no. 4 (1990) International Journal of Refugee Law","","inglés","","","  000025896 LDR -----nam--22------u CAT $$aCorteIDH-IIDH$$c20110425","Torture: the need for an international tribunal to investigate individual doctors who may have been involved ","<strong>Vesti; Peter</strong>  Espersen; Ole","","","Derecho internacional","","","","No","","0","","Periódicas","","Derecho internacional","No","","Sí","Torture: the need for an international tribunal to investigate individual doctors who may have been involved ","1990","Artículo de revista","International Journal of Refugee Law","2","4","","","Tribunales internacionales","","07-07-2020 19:44","","","",""],
+  // Fila 2 — Germain (Torture journal, 2011)
+  ["60776","ART-REV","Clasificación Propia","crspcidh","crspcidh","J0007","Germain,  Regina","Legal services","Best, promising, and emerging practices ","","Dinamarca","IRCT","2011","páginas 56-60","","","Vélez,  Leslie E.",""," Vol. 21, no. 1 (2011) Torture: journal on rehabilitation of torture victims and prevention of torture  "," Vol. 21, no. 1 (2011) Torture: journal on rehabilitation of torture victims and prevention of torture","","inglés","","","  000025895 LDR -----nam--22------u CAT $$aCorteIDH-IIDH$$c20110425","Legal services: Best, promising, and emerging practices ","<strong>Germain; Regina</strong>  Vélez; Leslie E.","","","Trato cruel; inhumano y degradante, Hospitales psiquiátricos","","","","No","","0","","Periódicas","","Trato cruel"," inhumano y degradante, Hospitales psiquiátricos","No","","Sí","Legal services: Best, promising, and emerging practices ","2011","Artículo de revista","Torture: journal on rehabilitation of torture victims and prevention of torture","21","1","","","Tortura","","","","",""],
+  // Fila 3 — Winter (Torture journal, 2011)
+  ["60775","ART-REV","Clasificación Propia","crspcidh","crspcidh","J0007","Winter,  Ann Marie","Social services","Effective practices in serving survivors of torture","","Dinamarca","IRCT","2011","páginas 48-55","","","",""," Vol. 21, no. 1 (2011) Torture: journal on rehabilitation of torture victims and prevention of torture  "," Vol. 21, no. 1 (2011) Torture: journal on rehabilitation of torture victims and prevention of torture","","inglés","","","  000025894 LDR -----nam--22------u CAT $$aCorteIDH-IIDH$$c20110425","Social services: Effective practices in serving survivors of torture ","<strong>Winter; Ann Marie</strong>","","","Trato cruel; inhumano y degradante, Hospitales psiquiátricos","","","","No","","0","","Periódicas","","Trato cruel"," inhumano y degradante, Hospitales psiquiátricos","No","","Sí","Social services: Effective practices in serving survivors of torture ","2011","Artículo de revista","Torture: journal on rehabilitation of torture victims and prevention of torture","21","1","","","Tortura","","07-07-2020 19:44","",""],
+  // Fila 4 — Lynn Gray (Torture journal, 2011)
+  ["60774","ART-REV","Clasificación Propia","crspcidh","crspcidh","J0007","Lynn Gray,  Amber Elizabeth","Expressive arts therapies","Working with survivors of torture","","Dinamarca","IRCT","2011","páginas 39-47","","","",""," Vol. 21, no. 1 (2011) Torture: journal on rehabilitation of torture victims and prevention of torture  "," Vol. 21, no. 1 (2011) Torture: journal on rehabilitation of torture victims and prevention of torture","","inglés","","","  000025893 LDR -----nam--22------u CAT $$aCorteIDH-IIDH$$c20110425","Expressive arts therapies: Working with survivors of torture ","<strong>Lynn Gray; Amber Elizabeth</strong>","","","Trato cruel; inhumano y degradante, Hospitales psiquiátricos","","","","No","","0","","Periódicas","","Trato cruel"," inhumano y degradante, Hospitales psiquiátricos","No","","Sí","Expressive arts therapies: Working with survivors of torture ","2011","Artículo de revista","Torture: journal on rehabilitation of torture victims and prevention of torture","21","1","","","Tortura","","07-07-2020 19:44","",""],
+  // Fila 5 — Fabri (Torture journal, 2011)
+  ["60773","ART-REV","Clasificación Propia","crspcidh","crspcidh","J0007","Fabri,  Mary R. Fabri","Best, promising, and emerging practices in the treatment of trauma","What can we apply in our work with torture survivors?","","Dinamarca","IRCT","2011","páginas 27-38","","","",""," Vol. 21, no. 1 (2011) Torture: journal on rehabilitation of torture victims and prevention of torture  "," Vol. 21, no. 1 (2011) Torture: journal on rehabilitation of torture victims and prevention of torture","","inglés","","","  000025892 LDR -----nam--22------u CAT $$aCorteIDH-IIDH$$c20110425","Best, promising, and emerging practices in the treatment of trauma: What can we apply in our work with torture survivors? ","<strong>Fabri; Mary R. Fabri</strong>","","","Trato cruel; inhumano y degradante, Hospitales psiquiátricos","","","","No","","0","","Periódicas","","Trato cruel"," inhumano y degradante, Hospitales psiquiátricos","No","","Sí","Best, promising, and emerging practices in the treatment of trauma: What can we apply in our work with torture survivors? ","2011","Artículo de revista","Torture: journal on rehabilitation of torture victims and prevention of torture","21","1","","","Tortura","","07-07-2020 19:44","",""],
+  // Fila 6 — Kinziem (Torture journal, 2011)
+  ["60772","ART-REV","Clasificación Propia","crspcidh","crspcidh","J0007","Kinziem,  J. David Kinzie","Guidelines for psychiatric care of torture survivors","","","Dinamarca","IRCT","2011","páginas 18-26","","","",""," Vol. 21, no. 1 (2011) Torture: journal on rehabilitation of torture victims and prevention of torture  "," Vol. 21, no. 1 (2011) Torture: journal on rehabilitation of torture victims and prevention of torture","","inglés","","","  000025891 LDR -----nam--22------u CAT $$aCorteIDH-IIDH$$c20110425","Guidelines for psychiatric care of torture survivors ","<strong>Kinziem; J. David Kinzie</strong>","","","Trato cruel; inhumano y degradante, Hospitales psiquiátricos","","","","No","","0","","Periódicas","","Trato cruel"," inhumano y degradante, Hospitales psiquiátricos","No","","Sí","Guidelines for psychiatric care of torture survivors ","2011","Artículo de revista","Torture: journal on rehabilitation of torture victims and prevention of torture","21","1","","","Tortura","","07-07-2020 19:44","",""],
+  // Fila 7 — Blay (International Journal of Refugee Law, 1990)
+  ["60771","ART-REV","Clasificación Propia","crspcidh","crspcidh","I0010","Blay,  Samuel K. N.","Reservations and declarations under the 1951 Convention and the 1967 Protocol relating to the status of refugees","","","Gran Bretaña ","Oxford University Press","1990","páginas 527-561","","","Tsamenyi,  B. Martin",""," Vol. 2, no. 4 (1990) International Journal of Refugee Law  "," Vol. 2, no. 4 (1990) International Journal of Refugee Law","","inglés","","","  000025890 LDR -----nam--22------u CAT $$aCorteIDH-IIDH$$c20110425","Reservations and declarations under the 1951 Convention and the 1967 Protocol relating to the status of refugees ","<strong>Blay; Samuel K. N.</strong>  Tsamenyi; B. Martin","","","Derecho internacional, Instrumentos internacionales de derechos humanos","","","","No","","0","","Periódicas","","Derecho internacional, Instrumentos internacionales de derechos humanos","No","","Sí","Reservations and declarations under the 1951 Convention and the 1967 Protocol relating to the status of refugees ","1990","Artículo de revista","International Journal of Refugee Law","2","4","","","Derecho internacional, Instrumentos internacionales de derechos humanos, Personas refugiadas, Seguridad nacional","","07-07-2020 19:44","","","",""]
+];
+
+var STAGES=[
+  [15, 'Leyendo registros de entrada…'],
+  [35, 'Normalizando Título 245$a…'],
+  [55, 'Extrayendo Documento Fuente 773$a y 773$g…'],
+  [75, 'Combinando descriptores 653$a, moviendo 650$a…'],
+  [90, 'Limpiando columnas de basura…'],
+  [100,'Normalización completada']
+];
+
+// ═══════════════════════════════════════════════════════════════════
+//  MOTOR DE NORMALIZACIÓN v2.0 — función stateless
+//  Recibe UNA fila como array, la procesa de forma completamente
+//  independiente y retorna {data, mod, ok}.
+//  Sin memoria entre llamadas. Segura para 1 o 100.000 registros.
+// ═══════════════════════════════════════════════════════════════════
+function normalizarRegistro(fila) {
+  // Inicializar: 58 posiciones, null/undefined → '', trim global
+  var o = [];
+  for (var i = 0; i < 58; i++) {
+    var v = fila[i];
+    o[i] = (v === null || v === undefined) ? '' : String(v).trim();
+  }
+
+  var mod = [];
+  function mark(i) { if (mod.indexOf(i) < 0) mod.push(i); }
+  function set(i, v) { if (o[i] !== v) { o[i] = v; mark(i); } }
+
+  // REGLA 1: Título 245$a (col[7]) — agregar ' :' al final si no lo tiene
+  if (o[7] && !o[7].endsWith(' :') && !o[7].endsWith(':')) {
+    set(7, o[7] + ' :');
+  }
+
+  // REGLA 2: 773$g (col[19]) — extraer SOLO "Vol. X, no. X (año)"
+  // El patrón siempre termina después del año entre paréntesis
+  if (o[19]) {
+    var m2 = o[19].match(/(.*?\(\d{4}\))/);
+    if (m2) set(19, m2[1]);
+  }
+
+  // REGLA 8: Documento Fuente 773$a (col[18]) — extraer SOLO el nombre de la publicación
+  // Eliminar la parte "Vol. X, no. X (año)" → queda solo el nombre
+  if (o[18]) {
+    var m8 = o[18].match(/\(\d{4}\)\s*(.*)/);
+    if (m8 && m8[1].trim()) set(18, m8[1].trim());
+  }
+
+  // REGLA 3: Descriptores No norm 653$a — combinar col[39]+col[40] si col[40] no es booleano
+  // Si col[40] está vacío → col[39] se mantiene tal cual
+  var c40 = (o[40] || '').trim();
+  if (c40 && !/^(no|s[íi]|yes|true|false)$/i.test(c40)) {
+    set(39, (o[39] || '').trim() + ', ' + c40);
+  }
+  set(40, '');  // vaciar Columna15 siempre (REGLA 7)
+
+  // REGLA 4: Descriptores normalizados 650$a (col[51]) — mover de col[52] si col[51] vacío
+  if (!(o[51] || '').trim() && (o[52] || '').trim()) {
+    set(51, (o[52] || '').trim());
+  }
+  set(52, '');  // vaciar 856$u siempre (REGLA 7)
+
+  // REGLA 6: Tipo de documento (col[45] = Columna6)
+  // Si col[45] contiene un año (4 dígitos) → el tipo está en col[46] → mover col[46]→col[45]
+  if (!o[45] || /^\d{4}$/.test(o[45])) {
+    var c46 = (o[46] || '').trim();
+    if (c46) set(45, c46);
+  }
+  set(46, '');  // vaciar Columna7 siempre (REGLA 7)
+
+  // REGLA 7: Vaciar columnas de basura (sin importar su contenido)
+  set(24, '');   // Notas — contiene MARC crudo con $$a, LDR, FMT, números de control
+  set(33, '');   // In Frontpage
+  set(34, '');   // Temp 1
+  set(35, '');   // Número de Ejemplares
+  set(41, '');   // Columna14
+  set(42, '');   // Columna13
+  set(43, '');   // Columna12 — título duplicado
+  set(44, '');   // Columna5 — año / título duplicado
+  set(47, '');   // Columna11 — número de volumen
+  set(48, '');   // Columna10 — número de edición
+  set(49, '');   // Columna9 — número
+  set(53, '');   // 856$y — fecha de catalogación
+  set(54, '');   // 856$m — fecha de catalogación
+  set(55, '');   // 856$7
+
+  return { data: o, mod: mod.sort(function(a,b){return a-b;}), ok: true };
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  VALORES ESPERADOS — 7 registros de referencia (post-normalización)
+// ═══════════════════════════════════════════════════════════════════
+var EXPECTED_ROWS = [
+  // Fila 1 — Vesti (International Journal of Refugee Law, 1990)
+  {7:'Torture :',18:'International Journal of Refugee Law',19:'Vol. 2, no. 4 (1990)',
+   24:'',33:'',34:'',35:'',39:'Derecho internacional',40:'',41:'',42:'',43:'',44:'',
+   45:'Artículo de revista',46:'',47:'',48:'',49:'',51:'Tribunales internacionales',52:'',53:'',54:'',55:''},
+  // Fila 2 — Germain (Torture journal, 2011)
+  {7:'Legal services :',18:'Torture: journal on rehabilitation of torture victims and prevention of torture',19:'Vol. 21, no. 1 (2011)',
+   24:'',33:'',34:'',35:'',39:'Trato cruel, inhumano y degradante, Hospitales psiquiátricos',40:'',41:'',42:'',43:'',44:'',
+   45:'Artículo de revista',46:'',47:'',48:'',49:'',51:'Tortura',52:'',53:'',54:'',55:''},
+  // Fila 3 — Winter (Torture journal, 2011)
+  {7:'Social services :',18:'Torture: journal on rehabilitation of torture victims and prevention of torture',19:'Vol. 21, no. 1 (2011)',
+   24:'',33:'',34:'',35:'',39:'Trato cruel, inhumano y degradante, Hospitales psiquiátricos',40:'',41:'',42:'',43:'',44:'',
+   45:'Artículo de revista',46:'',47:'',48:'',49:'',51:'Tortura',52:'',53:'',54:'',55:''},
+  // Fila 4 — Lynn Gray (Torture journal, 2011)
+  {7:'Expressive arts therapies :',18:'Torture: journal on rehabilitation of torture victims and prevention of torture',19:'Vol. 21, no. 1 (2011)',
+   24:'',33:'',34:'',35:'',39:'Trato cruel, inhumano y degradante, Hospitales psiquiátricos',40:'',41:'',42:'',43:'',44:'',
+   45:'Artículo de revista',46:'',47:'',48:'',49:'',51:'Tortura',52:'',53:'',54:'',55:''},
+  // Fila 5 — Fabri (Torture journal, 2011)
+  {7:'Best, promising, and emerging practices in the treatment of trauma :',18:'Torture: journal on rehabilitation of torture victims and prevention of torture',19:'Vol. 21, no. 1 (2011)',
+   24:'',33:'',34:'',35:'',39:'Trato cruel, inhumano y degradante, Hospitales psiquiátricos',40:'',41:'',42:'',43:'',44:'',
+   45:'Artículo de revista',46:'',47:'',48:'',49:'',51:'Tortura',52:'',53:'',54:'',55:''},
+  // Fila 6 — Kinziem (Torture journal, 2011)
+  {7:'Guidelines for psychiatric care of torture survivors :',18:'Torture: journal on rehabilitation of torture victims and prevention of torture',19:'Vol. 21, no. 1 (2011)',
+   24:'',33:'',34:'',35:'',39:'Trato cruel, inhumano y degradante, Hospitales psiquiátricos',40:'',41:'',42:'',43:'',44:'',
+   45:'Artículo de revista',46:'',47:'',48:'',49:'',51:'Tortura',52:'',53:'',54:'',55:''},
+  // Fila 7 — Blay (International Journal of Refugee Law, 1990)
+  {7:'Reservations and declarations under the 1951 Convention and the 1967 Protocol relating to the status of refugees :',18:'International Journal of Refugee Law',19:'Vol. 2, no. 4 (1990)',
+   24:'',33:'',34:'',35:'',39:'Derecho internacional, Instrumentos internacionales de derechos humanos',40:'',41:'',42:'',43:'',44:'',
+   45:'Artículo de revista',46:'',47:'',48:'',49:'',51:'Derecho internacional, Instrumentos internacionales de derechos humanos, Personas refugiadas, Seguridad nacional',52:'',53:'',54:'',55:''}
+];
+
+// ═══════════════════════════════════════════════════════════════════
+//  TABLA DE ENTRADA
+// ═══════════════════════════════════════════════════════════════════
+var numCols=8, numRows=0;
+
+function colLetter(n){
+  var r='';
+  do{r=String.fromCharCode(65+(n%26))+r;n=Math.floor(n/26)-1;}while(n>=0);
+  return r;
+}
+
+function buildHeader(){
+  var head=document.getElementById('inputHead');
+  var tr=document.createElement('tr');
+  var corner=document.createElement('th');corner.className='rn';corner.textContent='#';
+  tr.appendChild(corner);
+  for(var i=0;i<numCols;i++){
+    var th=document.createElement('th');th.className='ch';th.setAttribute('data-col',i);
+    th.innerHTML=colLetter(i)+'<span class="del-col" onclick="removeColumn('+i+')" title="Eliminar columna">×</span>';
+    tr.appendChild(th);
+  }
+  var addTh=document.createElement('th');addTh.className='add-col-th';addTh.title='Agregar columna';addTh.onclick=addColumn;addTh.textContent='+';
+  tr.appendChild(addTh);
+  head.innerHTML='';head.appendChild(tr);
+}
+
+function appendRow(vals){
+  numRows++;
+  var tbody=document.getElementById('inputBody');
+  var tr=document.createElement('tr');
+  var rn=document.createElement('td');rn.className='rn';rn.textContent=numRows;
+  tr.appendChild(rn);
+  for(var c=0;c<numCols;c++){
+    var td=document.createElement('td');td.contentEditable='true';
+    if(vals&&vals[c]!==undefined&&vals[c]!==null)td.textContent=String(vals[c]);
+    tr.appendChild(td);
+  }
+  tbody.appendChild(tr);
+}
+
+function addRow(){appendRow([]);updateCellCount();}
+
+function addColumn(){
+  numCols++;buildHeader();
+  var rows=document.getElementById('inputBody').querySelectorAll('tr');
+  for(var i=0;i<rows.length;i++){var td=document.createElement('td');td.contentEditable='true';rows[i].appendChild(td);}
+  updateCellCount();
+}
+
+function removeColumn(idx){
+  if(numCols<=1)return;
+  numCols--;buildHeader();
+  var rows=document.getElementById('inputBody').querySelectorAll('tr');
+  for(var i=0;i<rows.length;i++){var cells=rows[i].querySelectorAll('td');if(cells[idx+1])cells[idx+1].remove();}
+  updateCellCount();
+}
+
+function clearTable(){
+  numCols=8;numRows=0;
+  document.getElementById('inputHead').innerHTML='';
+  document.getElementById('inputBody').innerHTML='';
+  buildHeader();
+  for(var i=0;i<3;i++)appendRow([]);
+  updateCellCount();
+}
+
+function loadDemo(){
+  numCols=58;numRows=0;
+  document.getElementById('inputHead').innerHTML='';
+  document.getElementById('inputBody').innerHTML='';
+  buildHeader();
+  DEMO_ROWS.forEach(function(row){appendRow(row);});
+  updateCellCount();
+}
+
+function updateCellCount(){
+  var el=document.getElementById('cellCount');
+  if(el)el.textContent=numRows+(numRows===1?' fila':' filas')+' · '+numCols+(numCols===1?' columna':' columnas');
+}
+
+// Pegado desde Excel
+document.getElementById('inputTable').addEventListener('paste',function(e){
+  e.preventDefault();
+  var raw=(e.clipboardData||window.clipboardData).getData('text/plain');
+  var lines=raw.split(/\r?\n/).filter(function(r){return r.trim();});
+  if(!lines.length)return;
+  var tbody=document.getElementById('inputBody');
+  var focused=document.activeElement;
+  var rStart=0,cStart=0;
+  if(focused&&focused.tagName==='TD'&&!focused.classList.contains('rn')){
+    var row=focused.parentElement;
+    var ri=Array.from(tbody.children).indexOf(row);
+    if(ri>=0)rStart=ri;
+    var ci=Array.from(row.children).indexOf(focused)-1;
+    if(ci>=0)cStart=ci;
+  }
+  lines.forEach(function(line,ri){
+    var cells=line.split('\t');
+    var needed=cStart+cells.length;
+    while(numCols<needed)addColumn();
+    var rowEl=tbody.children[rStart+ri];
+    if(!rowEl){appendRow([]);rowEl=tbody.children[rStart+ri];}
+    cells.forEach(function(val,ci){
+      var el=rowEl.children[cStart+ci+1];
+      if(el&&!el.classList.contains('rn'))el.textContent=val.trim();
+    });
+  });
+  var allRows=tbody.querySelectorAll('tr');
+  for(var i=0;i<allRows.length;i++){var rn=allRows[i].querySelector('.rn');if(rn)rn.textContent=i+1;}
+  numRows=allRows.length;
+  updateCellCount();
+});
+
+// ═══════════════════════════════════════════════════════════════════
+//  LEER LA TABLA Y PROCESAR
+// ═══════════════════════════════════════════════════════════════════
+function readInputRows(){
+  var tbody=document.getElementById('inputBody');
+  var rows=Array.from(tbody.querySelectorAll('tr'));
+  var data=[];
+  rows.forEach(function(tr){
+    var cells=Array.from(tr.querySelectorAll('td:not(.rn)'));
+    var vals=cells.map(function(td){return td.textContent.trim();});
+    if(vals.every(function(v){return !v;}))return; // ignorar filas vacías
+    data.push(vals);
+  });
+  return data;
+}
+
+function isHeaderRow(vals){
+  // Si ≥4 valores coinciden exactamente con nombres en REF_COLS → es una fila de encabezados
+  var m=vals.reduce(function(acc,v){return acc+(REF_COLS.indexOf((v||'').trim())>=0?1:0);},0);
+  return m>=4;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PANEL DE REFERENCIA
+// ═══════════════════════════════════════════════════════════════════
+function buildRefChips(){
+  var c=document.getElementById('refChips');
+  REF_COLS.forEach(function(col,i){
+    var chip=document.createElement('span');
+    chip.className='ref-chip'+(KEY_COLS.indexOf(i)>=0?' key':'');
+    chip.textContent=col;
+    c.appendChild(chip);
+  });
+}
+
+function toggleRef(){
+  var p=document.getElementById('refPanel');
+  var ch=document.getElementById('refChevron');
+  var open=p.style.display!=='none';
+  p.style.display=open?'none':'block';
+  ch.style.transform=open?'':'rotate(180deg)';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PROCESAMIENTO
+// ═══════════════════════════════════════════════════════════════════
+var timer=null, pendingResults=[];
+
+function startProcessing(){
+  if(timer)return;
+
+  // Leer la tabla AHORA — lo que el usuario realmente pegó o escribió
+  var allRows=readInputRows();
+  var dataRows=allRows;
+  if(allRows.length>0&&isHeaderRow(allRows[0])){
+    dataRows=allRows.slice(1); // primer fila es encabezado → omitir
+  }
+
+  if(!dataRows.length){
+    alert('La tabla de entrada está vacía.\nPegue datos de Excel o use el botón "Cargar demo".');
+    return;
+  }
+
+  // Aplicar normalización a CADA fila de la tabla
+  pendingResults=dataRows.map(normalizarRegistro);
+
+  // Animación de progreso
+  var btn=document.getElementById('processBtn');
+  var wrap=document.getElementById('pwrap');
+  var fill=document.getElementById('pfill');
+  var pct=document.getElementById('ppct');
+  var lbl=document.getElementById('plbl');
+  btn.disabled=true;wrap.style.display='block';
+  lbl.textContent=STAGES[0][1];
+
+  var val=0,si=0;
+  timer=setInterval(function(){
+    val=Math.min(val+1,100);
+    fill.style.width=val+'%';pct.textContent=val+' %';
+    while(si<STAGES.length-1&&val>=STAGES[si][0]){si++;lbl.textContent=STAGES[si][1];}
+    if(val>=100){clearInterval(timer);timer=null;setTimeout(showResults,600);}
+  },50);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  MOSTRAR RESULTADOS
+// ═══════════════════════════════════════════════════════════════════
+function showResults(){
+  var results=pendingResults;
+
+  // Encabezado con nombres reales de las 58 columnas
+  var head=document.getElementById('resultsHead');
+  var htr=document.createElement('tr');
+  var rnTh=document.createElement('th');rnTh.className='rn';rnTh.textContent='#';
+  htr.appendChild(rnTh);
+  REF_COLS.forEach(function(col){
+    var th=document.createElement('th');
+    th.style.cssText='min-width:100px;max-width:180px;overflow:hidden;text-overflow:ellipsis';
+    th.title=col;th.textContent=col.length>20?col.substring(0,18)+'…':col;
+    htr.appendChild(th);
+  });
+  var stTh=document.createElement('th');stTh.style.cssText='width:88px;text-align:center';stTh.textContent='Estado';
+  htr.appendChild(stTh);
+  head.innerHTML='';head.appendChild(htr);
+
+  // Filas: datos que vienen del motor de normalización procesando lo que el usuario pegó
+  var tbody=document.getElementById('resultsBody');
+  tbody.innerHTML='';
+  results.forEach(function(rec,idx){
+    var tr=document.createElement('tr');
+    if(!rec.ok)tr.classList.add('rev');
+    var rnTd=document.createElement('td');rnTd.className='rn';rnTd.textContent=idx+1;
+    tr.appendChild(rnTd);
+    rec.data.forEach(function(val,ci){
+      var td=document.createElement('td');
+      td.style.cssText='max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+      var v=(val!==null&&val!==undefined)?String(val):'';
+      td.textContent=v;td.title=v;
+      if(rec.ok&&rec.mod.indexOf(ci)>=0)td.classList.add('mod');
+      tr.appendChild(td);
+    });
+    var stTd=document.createElement('td');stTd.style.textAlign='center';
+    stTd.innerHTML=rec.ok?'<span class="badge badge-g">Normalizado</span>':'<span class="badge badge-d">Revisar</span>';
+    tr.appendChild(stTd);
+    tbody.appendChild(tr);
+  });
+
+  // Resumen
+  var okCount=results.filter(function(r){return r.ok;}).length;
+  var revCount=results.length-okCount;
+  var modCount=results.reduce(function(acc,r){return acc+r.mod.length;},0);
+  var pl=function(n,s,p){return n+(n===1?s:p);};
+
+  document.getElementById('resultsSummary').textContent=
+    pl(results.length,' registro procesado',' registros procesados')+' · '+
+    pl(modCount,' campo corregido',' campos corregidos')+' · '+
+    pl(okCount,' normalizado',' normalizados')+
+    (revCount>0?' · '+pl(revCount,' pendiente de revisión',' pendientes de revisión'):'');
+
+  document.getElementById('resultsBadges').innerHTML=
+    '<span class="badge badge-w">'+pl(modCount,' campo corregido',' campos corregidos')+'</span>'+
+    (revCount>0?'<span class="badge badge-d">'+pl(revCount,' requiere revisión',' requieren revisión')+'</span>':'');
+
+  // Aviso de correcciones aplicadas (basado en todos los registros)
+  var corrEl=document.getElementById('corrNotice');
+  if(modCount>0){
+    var allMods={};
+    results.forEach(function(r){r.mod.forEach(function(i){allMods[i]=true;});});
+    var applied=[];
+    if(allMods[7])  applied.push('Título 245$a + " :"');
+    if(allMods[18]) applied.push('Documento Fuente 773$a');
+    if(allMods[19]) applied.push('Volumen/Número 773$g');
+    if(allMods[39]) applied.push('Descriptores 653$a (combinados)');
+    if(allMods[45]) applied.push('Tipo de documento');
+    if(allMods[51]) applied.push('Descriptores normalizados 650$a');
+    if(applied.length){
+      document.getElementById('corrMsg').textContent=' Reglas aplicadas: '+applied.join(' · ');
+      corrEl.style.display='block';
+    }
+  }else{
+    corrEl.style.display='none';
+  }
+
+  var sec=document.getElementById('resultsSection');
+  sec.style.display='block';
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  VALIDACIÓN AUTOMÁTICA — 7 registros de referencia
+// ═══════════════════════════════════════════════════════════════════
+function runValidation(){
+  var CHECKED_COLS=[7,18,19,24,33,34,35,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55];
+  var totalPass=0,totalFail=0;
+
+  // Cabecera de la tabla
+  var thead=document.getElementById('validHead');
+  var htr=document.createElement('tr');
+  ['Fila','ID','Campo','Esperado','Obtenido','Estado'].forEach(function(t){
+    var th=document.createElement('th');th.textContent=t;htr.appendChild(th);
+  });
+  thead.innerHTML='';thead.appendChild(htr);
+
+  var tbody=document.getElementById('validBody');
+  tbody.innerHTML='';
+
+  DEMO_ROWS.forEach(function(rawRow,ri){
+    var result=normalizarRegistro(rawRow);
+    var exp=EXPECTED_ROWS[ri];
+    var rowId=rawRow[0]||('Fila '+(ri+1));
+    var firstInRow=true;
+
+    CHECKED_COLS.forEach(function(ci){
+      if(!(ci in exp))return; // columna no en los esperados → saltar
+      var actual=(result.data[ci]||'').trim();
+      var expected=(exp[ci]||'').trim();
+      var pass=(actual===expected);
+      if(pass)totalPass++;else totalFail++;
+
+      var tr=document.createElement('tr');
+      tr.style.background=pass?'var(--surface-pass,rgba(34,197,94,.06))':'var(--surface-fail,rgba(239,68,68,.07))';
+
+      // Fila
+      var td0=document.createElement('td');
+      td0.style.cssText='white-space:nowrap;font-weight:500;color:var(--text-secondary);font-size:12px;padding:4px 8px';
+      td0.textContent=firstInRow?'Fila '+(ri+1):'';
+      tr.appendChild(td0);
+      firstInRow=false;
+
+      // ID
+      var td1=document.createElement('td');
+      td1.style.cssText='white-space:nowrap;font-size:12px;color:var(--text-secondary);padding:4px 8px';
+      td1.textContent=rowId;
+      tr.appendChild(td1);
+
+      // Campo
+      var td2=document.createElement('td');
+      td2.style.cssText='white-space:nowrap;font-size:11px;font-weight:500;padding:4px 8px';
+      var colName=REF_COLS[ci]||('col['+ci+']');
+      td2.textContent='Col '+(ci+1)+' — '+colName;
+      tr.appendChild(td2);
+
+      // Esperado
+      var td3=document.createElement('td');
+      td3.style.cssText='max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;padding:4px 8px;color:var(--text-secondary)';
+      td3.textContent=expected===''?'(vacío)':expected;
+      td3.title=expected;
+      tr.appendChild(td3);
+
+      // Obtenido
+      var td4=document.createElement('td');
+      td4.style.cssText='max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;padding:4px 8px';
+      td4.textContent=actual===''?'(vacío)':actual;
+      td4.title=actual;
+      if(!pass)td4.style.color='var(--text-danger,#ef4444)';
+      tr.appendChild(td4);
+
+      // Estado
+      var td5=document.createElement('td');
+      td5.style.cssText='text-align:center;padding:4px 8px';
+      td5.innerHTML=pass?'<span class="badge badge-g">✓ OK</span>':'<span class="badge badge-d">✗ FALLA</span>';
+      tr.appendChild(td5);
+
+      tbody.appendChild(tr);
+    });
+  });
+
+  // Resumen
+  var total=totalPass+totalFail;
+  var sumEl=document.getElementById('validSummary');
+  if(totalFail===0){
+    sumEl.textContent='✓ '+totalPass+'/'+total+' verificaciones pasaron';
+    sumEl.style.cssText='font-size:12px;padding:3px 10px;border-radius:var(--radius);background:rgba(34,197,94,.15);color:#16a34a;font-weight:500';
+  }else{
+    sumEl.textContent=totalFail+' falla(s) · '+totalPass+'/'+total+' OK';
+    sumEl.style.cssText='font-size:12px;padding:3px 10px;border-radius:var(--radius);background:rgba(239,68,68,.12);color:#dc2626;font-weight:500';
+  }
+
+  var sec=document.getElementById('validSection');
+  sec.style.display='block';
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  REINICIAR
+// ═══════════════════════════════════════════════════════════════════
+function resetAll(){
+  if(timer){clearInterval(timer);timer=null;}
+  pendingResults=[];
+  document.getElementById('processBtn').disabled=false;
+  document.getElementById('pwrap').style.display='none';
+  document.getElementById('pfill').style.width='0%';
+  document.getElementById('ppct').textContent='0 %';
+  document.getElementById('plbl').textContent='Iniciando proceso…';
+  document.getElementById('resultsSection').style.display='none';
+  document.getElementById('resultsHead').innerHTML='';
+  document.getElementById('resultsBody').innerHTML='';
+  document.getElementById('corrNotice').style.display='none';
+}
+
+// ── Inicialización ────────────────────────────────────────────────
+buildHeader();
+appendRow([]);appendRow([]);appendRow([]);
+numRows=3;
+updateCellCount();
+buildRefChips();
+</script>
+
+<!-- ── Menú hamburguesa ── -->
+<div id="mbg" onclick="closeMbg()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;"></div>
+<nav id="mnav" style="position:fixed;top:0;right:-320px;width:300px;max-width:90vw;height:100%;background:#0C447C;z-index:901;transition:right .28s ease;overflow-y:auto;box-shadow:-4px 0 30px rgba(0,0,0,.3);">
+  <div style="display:flex;justify-content:flex-end;padding:1.1rem 1.25rem .5rem">
+    <button onclick="closeMbg()" style="background:none;border:none;color:#E6F1FB;font-size:22px;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+      <i class="ti ti-x" aria-hidden="true"></i>
+    </button>
+  </div>
+  <ul style="list-style:none;padding:0 .75rem;margin:0">
+    <li><a href="../index.html" style="display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:0.5px solid rgba(255,255,255,.1);text-decoration:none;border-radius:8px;">
+      <span style="font-size:22px;margin-top:2px">🏠</span>
+      <div><div style="font-size:14px;font-weight:600;color:#E6F1FB">Inicio</div><div style="font-size:12px;color:#85B7EB">Ir a la página principal</div></div>
+    </a></li>
+    <li><a href="#" style="display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:0.5px solid rgba(255,255,255,.1);text-decoration:none;border-radius:8px;">
+      <span style="font-size:22px;margin-top:2px">🕐</span>
+      <div><div style="font-size:14px;font-weight:600;color:#E6F1FB">Historial</div><div style="font-size:12px;color:#85B7EB">Ver registros procesados</div></div>
+    </a></li>
+    <li><a href="#" style="display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:0.5px solid rgba(255,255,255,.1);text-decoration:none;border-radius:8px;">
+      <span style="font-size:22px;margin-top:2px">❓</span>
+      <div><div style="font-size:14px;font-weight:600;color:#E6F1FB">Ayuda</div><div style="font-size:12px;color:#85B7EB">Centro de ayuda y soporte</div></div>
+    </a></li>
+    <li><a href="contacto.html" style="display:flex;align-items:flex-start;gap:14px;padding:14px 16px;text-decoration:none;border-radius:8px;">
+      <span style="font-size:22px;margin-top:2px">✉️</span>
+      <div><div style="font-size:14px;font-weight:600;color:#E6F1FB">Contacto y sugerencias</div><div style="font-size:12px;color:#85B7EB">Envianos tus comentarios o reporta un error</div></div>
+    </a></li>
+  </ul>
+</nav>
+<script>
+function openMbg(){document.getElementById('mbg').style.display='block';document.getElementById('mnav').style.right='0';document.body.style.overflow='hidden';}
+function closeMbg(){document.getElementById('mbg').style.display='none';document.getElementById('mnav').style.right='-320px';document.body.style.overflow='';}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMbg();});
+</script>
+</body>
+</html>
